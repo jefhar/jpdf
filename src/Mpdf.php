@@ -26160,7 +26160,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$fbwi = $fbw - 2; // Full barcode width incl. light margins - 2mm - for isbn string
 		// cf. http://www.gs1uk.org/downloads/bar_code/Bar coding getting it right.pdf
 		$num_height = 3 * $size;     // Height of numerals
-		$fbh = $arrcode['nom-H'] * $size * $height;  // Full barcode height incl. numerals
+		$fbh = $arrcode[BarcodeInterface::NOM_H] * $size * $height;  // Full barcode height incl. numerals
 		$bch = $fbh - (1.5 * $size);     // Barcode height of bars	 (3mm for numerals)
 
 		if (($btype == 'EAN13' && $showtext) || $btype == 'ISSN' || $btype == 'ISBN') { // Add height for ISBN string + margin from top of bars
@@ -26507,7 +26507,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres);
 		$fbw = $bcw + $llm + $rlm;  // Full barcode width incl. light margins
 
-		$bch = ($arrcode["nom-H"] * $size * $height);
+		$bch = ($arrcode[BarcodeInterface::NOM_H] * $size * $height);
 		$fbh = $bch + $tlm + $blm;  // Full barcode height
 
 		// PRINT border background color

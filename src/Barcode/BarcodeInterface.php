@@ -10,6 +10,7 @@ interface BarcodeInterface
     public const CODE = 'code';
     public const LIGHT_ML = 'lightmL';
     public const LIGHT_MR = 'lightmR';
+    public const LIGHT_TB = 'lightTB';
     public const MAX_H = 'maxh';
     public const MAX_W = 'maxw';
     public const NOM_H = 'nom-H';

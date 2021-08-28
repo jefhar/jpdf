@@ -194,7 +194,7 @@ class BarCode extends Tag
 					$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode['nom-X'] * $objattr['bsize'];
 				}
 
-				$h = $arrcode['nom-H'] * $objattr['bsize'] * $objattr['bheight'];
+				$h = $arrcode[BarcodeInterface::NOM_H] * $objattr['bsize'] * $objattr['bheight'];
 				// Add height for ISBN string + margin from top of bars
 				if (($objattr['showtext'] && $objattr['btype'] === 'EAN13') || $objattr['btype'] === 'ISBN' || $objattr['btype'] === 'ISSN') {
 					$tisbnm = 1.5 * $objattr['bsize']; // Top margin between TOP TEXT (isbn - if shown) & bars
@@ -218,7 +218,7 @@ class BarCode extends Tag
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], '', $objattr['quiet_l'], $objattr['quiet_r']);
 
 				$w = ($arrcode[BarcodeInterface::MAX_W] * $arrcode['nom-X'] * $objattr['bsize']) + $arrcode['quietL'] + $arrcode['quietR'];
-				$h = ($arrcode['nom-H'] * $objattr['bsize']) + (2 * $arrcode['quietTB']);
+				$h = ($arrcode[BarcodeInterface::NOM_H] * $objattr['bsize']) + (2 * $arrcode['quietTB']);
 
 			} elseif (in_array($objattr['btype'], ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C',
 				'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B',
@@ -226,7 +226,7 @@ class BarCode extends Tag
 
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], $objattr['pr_ratio'], $objattr['quiet_zone_left'], $objattr['quiet_zone_right']);
 				$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode['nom-X'] * $objattr['bsize'];
-				$h = ((2 * $arrcode['lightTB'] * $arrcode['nom-X']) + $arrcode['nom-H']) * $objattr['bsize'] * $objattr['bheight'];
+				$h = ((2 * $arrcode['lightTB'] * $arrcode['nom-X']) + $arrcode[BarcodeInterface::NOM_H]) * $objattr['bsize'] * $objattr['bheight'];
 
 			} else {
 				return;

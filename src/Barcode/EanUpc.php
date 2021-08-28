@@ -26,7 +26,7 @@ class EanUpc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$this->data[BarcodeInterface::LIGHT_ML] = $leftMargin; // LEFT light margin =  x X-dim (http://www.gs1uk.org)
 		$this->data[BarcodeInterface::LIGHT_MR] = $rightMargin; // RIGHT light margin =  x X-dim (http://www.gs1uk.org)
 		$this->data['nom-X'] = $xDim; // Nominal value for X-dim in mm (http://www.gs1uk.org)
-		$this->data['nom-H'] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
+		$this->data[BarcodeInterface::NOM_H] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
 	}
 
 	/**
