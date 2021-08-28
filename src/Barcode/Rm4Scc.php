@@ -19,7 +19,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$this->data[BarcodeInterface::NOM_X] = $xDim;
 		$this->data[BarcodeInterface::NOM_H] = 5.0; // Nominal value for Height of Full bar in mm (spec.)
 		$this->data[BarcodeInterface::QUIET_L] = 2; // LEFT Quiet margin =  mm (spec.)
-		$this->data['quietR'] = 2; // RIGHT Quiet margin =  mm (spec.)
+		$this->data[BarcodeInterface::QUIET_R] = 2; // RIGHT Quiet margin =  mm (spec.)
 		$this->data['quietTB'] = 2; // TOP/BOTTOM Quiet margin =  mm (spec?)
 	}
 

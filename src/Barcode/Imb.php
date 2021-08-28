@@ -54,7 +54,7 @@ class Imb extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 		// USPS-B-3200 Revision C = 4.623
 		// USPS-B-3200 Revision E = 3.68
 		$this->data[BarcodeInterface::QUIET_L] = 3.175; // LEFT Quiet margin =  mm (spec.)
-		$this->data['quietR'] = 3.175; // RIGHT Quiet margin =  mm (spec.)
+		$this->data[BarcodeInterface::QUIET_R] = 3.175; // RIGHT Quiet margin =  mm (spec.)
 		$this->data['quietTB'] = 0.711; // TOP/BOTTOM Quiet margin =  mm (spec.)
 	}
 

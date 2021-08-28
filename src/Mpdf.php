@@ -26495,7 +26495,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 
 		if ($btype === 'IMB' || $btype === 'RM4SCC' || $btype === 'KIX' || $btype === 'POSTNET' || $btype === 'PLANET') {
 			$llm = $arrcode[BarcodeInterface::QUIET_L] / $k; // Left Quiet margin
-			$rlm = $arrcode['quietR'] / $k; // Right Quiet margin
+			$rlm = $arrcode[BarcodeInterface::QUIET_R] / $k; // Right Quiet margin
 			$tlm = $blm = $arrcode['quietTB'] / $k;
 			$height = 1;  // Overrides
 		} elseif (in_array($btype, ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C', 'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B', 'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
