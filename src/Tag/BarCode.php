@@ -2,6 +2,8 @@
 
 namespace Mpdf\Tag;
 
+use Mpdf\Barcode\BarcodeInterface;
+
 class BarCode extends Tag
 {
 
@@ -186,10 +188,10 @@ class BarCode extends Tag
 
 				if ($objattr['bsupp'] == 2 || $objattr['bsupp'] == 5) { // EAN-2 or -5 Supplement
 					$supparrcode = $this->barcode->getBarcodeArray($objattr['bsupp_code'], 'EAN' . $objattr['bsupp'], '', $objattr['quiet_l'], $objattr['quiet_r']);
-					$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']
-							+ $supparrcode['maxw'] + $supparrcode['sepM']) * $arrcode['nom-X'] * $objattr['bsize'];
+					$w = ($arrcode[BarcodeInterface::MAXW] + $arrcode['lightmL'] + $arrcode['lightmR']
+							+ $supparrcode[BarcodeInterface::MAXW] + $supparrcode['sepM']) * $arrcode['nom-X'] * $objattr['bsize'];
 				} else {
-					$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
+					$w = ($arrcode[BarcodeInterface::MAXW] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
 				}
 
 				$h = $arrcode['nom-H'] * $objattr['bsize'] * $objattr['bheight'];
@@ -215,7 +217,7 @@ class BarCode extends Tag
 
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], '', $objattr['quiet_l'], $objattr['quiet_r']);
 
-				$w = ($arrcode['maxw'] * $arrcode['nom-X'] * $objattr['bsize']) + $arrcode['quietL'] + $arrcode['quietR'];
+				$w = ($arrcode[BarcodeInterface::MAXW] * $arrcode['nom-X'] * $objattr['bsize']) + $arrcode['quietL'] + $arrcode['quietR'];
 				$h = ($arrcode['nom-H'] * $objattr['bsize']) + (2 * $arrcode['quietTB']);
 
 			} elseif (in_array($objattr['btype'], ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C',
@@ -223,7 +225,7 @@ class BarCode extends Tag
 				'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
 
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], $objattr['pr_ratio'], $objattr['quiet_zone_left'], $objattr['quiet_zone_right']);
-				$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
+				$w = ($arrcode[BarcodeInterface::MAXW] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
 				$h = ((2 * $arrcode['lightTB'] * $arrcode['nom-X']) + $arrcode['nom-H']) * $objattr['bsize'] * $objattr['bheight'];
 
 			} else {

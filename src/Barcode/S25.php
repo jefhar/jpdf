@@ -69,7 +69,7 @@ class S25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 		}
 
 		$seq .= '1101011';
-		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 		$bararray['checkdigit'] = $checkdigit;
 
 		$this->data = $this->binseqToArray($seq, $bararray);

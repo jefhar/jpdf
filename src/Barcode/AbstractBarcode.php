@@ -41,7 +41,7 @@ abstract class AbstractBarcode
             ) {
                 $t = $sequence[$i] == '1';
                 $barcodeData[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
-                $barcodeData['maxw'] += $w;
+                $barcodeData[BarcodeInterface::MAXW] += $w;
                 ++$k;
                 $w = 0;
             }

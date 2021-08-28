@@ -213,14 +213,14 @@ class EanUpc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$seq = '101'; // left guard bar
 
 		if ($upce && isset($upceCode)) {
-			$bararray = [BarcodeInterface::CODE => $upceCode, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+			$bararray = [BarcodeInterface::CODE => $upceCode, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 			$p = $upceParities[$code[1]][$r];
 			for ($i = 0; $i < 6; ++$i) {
 				$seq .= $codes[$p[$i]][$upceCode[$i]];
 			}
 			$seq .= '010101'; // right guard bar
 		} else {
-			$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+			$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 			$halfLen = ceil($length / 2);
 			if ($length == 8) {
 				for ($i = 0; $i < $halfLen; ++$i) {
@@ -250,7 +250,7 @@ class EanUpc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 					$t = false; // space
 				}
 				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
-				$bararray['maxw'] += $w;
+				$bararray[BarcodeInterface::MAXW] += $w;
 				++$k;
 				$w = 0;
 			}

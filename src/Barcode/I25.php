@@ -62,7 +62,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 		// add start and stop codes
 		$code = 'AA' . strtolower($code) . 'ZA';
 
-		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 		$clen = strlen($code);
 		for ($i = 0; $i < $clen; $i = ($i + 2)) {
@@ -93,7 +93,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 				}
 
 				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
-				$bararray['maxw'] += $w;
+				$bararray[BarcodeInterface::MAXW] += $w;
 				++$k;
 			}
 		}

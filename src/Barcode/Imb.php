@@ -178,7 +178,7 @@ class Imb extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 
 		// build bars
 		$k = 0;
-		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => $daft['F'], BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => $daft['F'], BarcodeInterface::BCODE => []];
 		for ($i = 0; $i < 65; ++$i) {
 			$asc = (($characters[$asc_chr[$i]] & pow(2, $asc_pos[$i])) > 0);
 			$dsc = (($characters[$dsc_chr[$i]] & pow(2, $dsc_pos[$i])) > 0);
@@ -202,11 +202,11 @@ class Imb extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
 			// Gap
 			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 1, 'p' => 0];
-			$bararray['maxw'] += (1 + $gapWidth);
+			$bararray[BarcodeInterface::MAXW] += (1 + $gapWidth);
 		}
 
 		unset($bararray[BarcodeInterface::BCODE][($k - 1)]);
-		$bararray['maxw'] -= $gapWidth;
+		$bararray[BarcodeInterface::MAXW] -= $gapWidth;
 
 		$this->data = $bararray;
 	}
