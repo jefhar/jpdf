@@ -1,11 +1,15 @@
 {
-	"name": "mpdf/mpdf",
+	"name": "jpdf/jpdf",
 	"type": "library",
-	"description": "PHP library generating PDF files from UTF-8 encoded HTML",
+	"description": "PHP library generating PDF files from UTF-8 encoded HTML. Forked from mpdf/mpdf.",
 	"keywords": ["php", "pdf", "utf-8"],
-	"homepage": "https://mpdf.github.io",
+	"homepage": "https://github.com/jefhar/jpdf",
 	"license": ["GPL-2.0-only"],
 	"authors": [
+		{
+			"name": "Jeff Harris",
+			"role": "Developer, fork"
+		},
 		{
 			"name": "Matěj Humpál",
 			"role": "Developer, maintainer"
@@ -21,7 +25,7 @@
 		"docs": "http://mpdf.github.io"
 	},
 	"require": {
-		"php": "^5.6 || ^7.0 || ~8.0.0",
+		"php": "^7.4 || ~8.0.0",
 		"ext-gd": "*",
 		"ext-mbstring": "*",
 		"myclabs/deep-copy": "^1.7",
