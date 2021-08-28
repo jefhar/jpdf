@@ -4,12 +4,17 @@ namespace Mpdf\Barcode;
 
 abstract class AbstractBarcode implements BarcodeInterface
 {
-
+    protected string $type;
     protected array $data;
 
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 
     /**
