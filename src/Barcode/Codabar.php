@@ -53,7 +53,7 @@ class Codabar extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 			'D' => '11122211'
 		];
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 
 		$code = strtoupper($code);

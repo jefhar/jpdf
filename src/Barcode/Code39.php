@@ -102,7 +102,7 @@ class Code39 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		// add star$this->>datat and stop codes
 		$code = '*' . $code . '*';
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 		$clen = strlen($code);
 		for ($i = 0; $i < $clen; ++$i) {

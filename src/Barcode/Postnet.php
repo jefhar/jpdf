@@ -62,7 +62,7 @@ class Postnet extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 			];
 		}
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 5, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => 5, BarcodeInterface::BCODE => []];
 
 		$k = 0;
 		$code = str_replace('-', '', $code);

@@ -45,7 +45,7 @@ class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			'S' => '112211'
 		];
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 
 		$k = 0;
 
