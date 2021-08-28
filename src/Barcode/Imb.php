@@ -48,7 +48,7 @@ class Imb extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 
 		$this->init($code, $gapWidth, $daft);
 
-		$this->data['nom-X'] = $xDim;
+		$this->data[BarcodeInterface::NOM_X] = $xDim;
 		$this->data[BarcodeInterface::NOM_H] = 3.68; // Nominal value for Height of Full bar in mm (spec.)
 
 		// USPS-B-3200 Revision C = 4.623

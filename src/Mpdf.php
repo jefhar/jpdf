@@ -26148,9 +26148,9 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 
 		$size /= $k; // in case resized in a table
 
-		$xres = $arrcode['nom-X'] * $size;
-		$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $arrcode['nom-X'] * $size; // Left Light margin
-		$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode['nom-X'] * $size; // Right Light margin
+		$xres = $arrcode[BarcodeInterface::NOM_X] * $size;
+		$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $arrcode[BarcodeInterface::NOM_X] * $size; // Left Light margin
+		$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode[BarcodeInterface::NOM_X] * $size; // Right Light margin
 
 		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
@@ -26408,8 +26408,8 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 				throw new \Mpdf\MpdfException('Barcode supplement incorrect: ' . $supplement_code);
 			}
 
-			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode['sepM']) * $arrcode['nom-X'] * $size); // Left Light margin
-			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode['nom-X'] * $size; // Right Light margin
+			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode['sepM']) * $arrcode[BarcodeInterface::NOM_X] * $size); // Left Light margin
+			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode[BarcodeInterface::NOM_X] * $size; // Right Light margin
 
 			$bcw = ($supparrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
@@ -26491,7 +26491,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$lw = $this->LineWidth;
 		$this->SetLineWidth(0.01);
 		$size /= $k; // in case resized in a table
-		$xres = $arrcode['nom-X'] * $size;
+		$xres = $arrcode[BarcodeInterface::NOM_X] * $size;
 
 		if ($btype === 'IMB' || $btype === 'RM4SCC' || $btype === 'KIX' || $btype === 'POSTNET' || $btype === 'PLANET') {
 			$llm = $arrcode['quietL'] / $k; // Left Quiet margin
