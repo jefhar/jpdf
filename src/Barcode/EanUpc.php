@@ -255,7 +255,7 @@ class EanUpc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 				$w = 0;
 			}
 		}
-		$bararray['checkdigit'] = $checkdigit;
+		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $bararray;
 	}

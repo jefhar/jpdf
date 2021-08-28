@@ -133,7 +133,7 @@ class Code39 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			++$k;
 		}
 
-		$bararray['checkdigit'] = $checkdigit;
+		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $bararray;
 	}

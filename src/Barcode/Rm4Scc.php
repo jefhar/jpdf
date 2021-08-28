@@ -133,7 +133,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			$col %= 6;
 			$chk = array_keys($checktable, [$row, $col]);
 			$code .= $chk[0];
-			$bararray['checkdigit'] = $chk[0];
+			$bararray[BarcodeInterface::CHECK_DIGIT] = $chk[0];
 			++$len;
 		}
 

@@ -125,7 +125,7 @@ class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			}
 		}
 
-		$bararray['checkdigit'] = $checkdigit;
+		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $bararray;
 	}

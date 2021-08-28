@@ -6,7 +6,7 @@ interface BarcodeInterface
 {
     // Array keys
     public const BCODE = 'bcode';
-    public const CHECKDIGIT = 'checkdigit';
+    public const CHECK_DIGIT = 'checkdigit';
     public const CODE = 'code';
     public const LIGHTML = 'lightmL';
     public const LIGHTMR = 'lightmR';

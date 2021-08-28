@@ -97,7 +97,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 				++$k;
 			}
 		}
-		$bararray['checkdigit'] = $checkdigit;
+		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $bararray;
 	}

@@ -26113,12 +26113,12 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 				|| ($btype == 'UPCE' && strlen($code) === 11)
 				|| ($btype == 'EAN8' && strlen($code) === 7)) {
 
-			$code .= $arrcode['checkdigit'];
+			$code .= $arrcode[BarcodeInterface::CHECK_DIGIT];
 
 			if (stristr($codestr, '-')) {
-				$codestr .= '-' . $arrcode['checkdigit'];
+				$codestr .= '-' . $arrcode[BarcodeInterface::CHECK_DIGIT];
 			} else {
-				$codestr .= $arrcode['checkdigit'];
+				$codestr .= $arrcode[BarcodeInterface::CHECK_DIGIT];
 			}
 		}
 
@@ -26212,7 +26212,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		}
 
 		if ($arrcode !== false) {
-			foreach ($arrcode["bcode"] as $v) {
+			foreach ($arrcode[BarcodeInterface::BCODE] as $v) {
 				$bw = ($v["w"] * $xres);
 				if ($v["t"]) {
 					// draw a vertical bar
@@ -26427,7 +26427,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			}
 
 			if ($supparrcode !== false) {
-				foreach ($supparrcode["bcode"] as $v) {
+				foreach ($supparrcode[BarcodeInterface::BCODE] as $v) {
 					$bw = ($v["w"] * $xres);
 					if ($v["t"]) {
 						// draw a vertical bar

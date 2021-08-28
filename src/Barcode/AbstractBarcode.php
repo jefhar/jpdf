@@ -2,7 +2,7 @@
 
 namespace Mpdf\Barcode;
 
-abstract class AbstractBarcode
+abstract class AbstractBarcode implements BarcodeInterface
 {
 
     protected array $data;
@@ -22,7 +22,7 @@ abstract class AbstractBarcode
 
     public function getChecksum(): string
     {
-        return $this->getKey('checkdigit');
+        return $this->getKey(self::CHECK_DIGIT);
     }
 
     /**
