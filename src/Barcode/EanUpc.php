@@ -213,14 +213,14 @@ class EanUpc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$seq = '101'; // left guard bar
 
 		if ($upce && isset($upceCode)) {
-			$bararray = [BarcodeInterface::CODE => $upceCode, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
+			$bararray = [BarcodeInterface::CODE => $upceCode, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 			$p = $upceParities[$code[1]][$r];
 			for ($i = 0; $i < 6; ++$i) {
 				$seq .= $codes[$p[$i]][$upceCode[$i]];
 			}
 			$seq .= '010101'; // right guard bar
 		} else {
-			$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
+			$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
 			$halfLen = ceil($length / 2);
 			if ($length == 8) {
 				for ($i = 0; $i < $halfLen; ++$i) {

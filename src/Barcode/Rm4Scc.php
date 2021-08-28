@@ -81,7 +81,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$code = strtoupper($code);
 		$len = strlen($code);
 
-		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => $daft['F'], BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => $daft['F'], BarcodeInterface::BCODE => []];
 
 		if ($notkix) {
 			// table for checksum calculation (row,col)

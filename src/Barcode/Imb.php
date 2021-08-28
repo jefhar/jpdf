@@ -178,7 +178,7 @@ class Imb extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 
 		// build bars
 		$k = 0;
-		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, 'maxh' => $daft['F'], BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, 'maxw' => 0, BarcodeInterface::MAXH => $daft['F'], BarcodeInterface::BCODE => []];
 		for ($i = 0; $i < 65; ++$i) {
 			$asc = (($characters[$asc_chr[$i]] & pow(2, $asc_pos[$i])) > 0);
 			$dsc = (($characters[$dsc_chr[$i]] & pow(2, $dsc_pos[$i])) > 0);
