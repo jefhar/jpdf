@@ -26501,7 +26501,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		} elseif (in_array($btype, ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C', 'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B', 'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
 			$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $xres; // Left Quiet margin
 			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $xres; // Right Quiet margin
-			$tlm = $blm = $arrcode['lightTB'] * $xres * $height;
+			$tlm = $blm = $arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height;
 		}
 
 		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres);
@@ -26549,8 +26549,8 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 
 		// PRINT BEARER BARS
 		if ($btype == 'I25B' || $btype == 'I25B+') {
-			$this->Rect($x, $y, $fbw, ($arrcode['lightTB'] * $xres * $height), 'F');
-			$this->Rect($x, $y + $tlm + $bch, $fbw, ($arrcode['lightTB'] * $xres * $height), 'F');
+			$this->Rect($x, $y, $fbw, ($arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height), 'F');
+			$this->Rect($x, $y + $tlm + $bch, $fbw, ($arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height), 'F');
 		}
 
 		// Restore **************

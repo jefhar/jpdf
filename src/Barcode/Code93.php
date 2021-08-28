@@ -20,7 +20,7 @@ class Code93 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
 		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
 		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
 	}
 
 	/**

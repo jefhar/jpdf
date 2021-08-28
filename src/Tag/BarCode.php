@@ -226,7 +226,7 @@ class BarCode extends Tag
 
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], $objattr['pr_ratio'], $objattr['quiet_zone_left'], $objattr['quiet_zone_right']);
 				$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
-				$h = ((2 * $arrcode['lightTB'] * $arrcode[BarcodeInterface::NOM_X]) + $arrcode[BarcodeInterface::NOM_H]) * $objattr['bsize'] * $objattr['bheight'];
+				$h = ((2 * $arrcode[BarcodeInterface::LIGHT_TB] * $arrcode[BarcodeInterface::NOM_X]) + $arrcode[BarcodeInterface::NOM_H]) * $objattr['bsize'] * $objattr['bheight'];
 
 			} else {
 				return;
