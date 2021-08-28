@@ -20,6 +20,7 @@ RUN apt-get update \
     && apt-get -y remove php-apcu \
         php7.4-zip \
     && apt-get -y --no-install-recommends install \
+        php7.4-bcmath \
         php7.4-curl \
         php7.4-gd \
         php7.4-mbstring \
