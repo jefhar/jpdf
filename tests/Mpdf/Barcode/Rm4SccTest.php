@@ -18,8 +18,8 @@ class Rm4SccTest extends \PHPUnit_Framework_TestCase
 		$array = $barcode->getData();
 
 		$this->assertInternalType('array', $array);
-		$this->assertArrayHasKey(BarcodeInterface::MAXH, $array);
-		$this->assertGreaterThan(0, $array[BarcodeInterface::MAXH]);
+		$this->assertArrayHasKey(BarcodeInterface::MAX_H, $array);
+		$this->assertGreaterThan(0, $array[BarcodeInterface::MAX_H]);
 	}
 
 }

@@ -62,7 +62,7 @@ class Postnet extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 			];
 		}
 
-		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 5, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 5, BarcodeInterface::BCODE => []];
 
 		$k = 0;
 		$code = str_replace('-', '', $code);
@@ -87,7 +87,7 @@ class Postnet extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 		// start bar
 		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
 		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 5, 'p' => 0];
-		$bararray[BarcodeInterface::MAXW] += (1 + $gapWidth);
+		$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
 
 		for ($i = 0; $i < $len; ++$i) {
 			for ($j = 0; $j < 5; ++$j) {
@@ -101,13 +101,13 @@ class Postnet extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 				}
 				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
 				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
-				$bararray[BarcodeInterface::MAXW] += (1 + $gapWidth);
+				$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
 			}
 		}
 
 		// end bar
 		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
-		$bararray[BarcodeInterface::MAXW] += 1;
+		$bararray[BarcodeInterface::MAX_W] += 1;
 		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $bararray;

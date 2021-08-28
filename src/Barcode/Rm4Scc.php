@@ -81,7 +81,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$code = strtoupper($code);
 		$len = strlen($code);
 
-		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => $daft['F'], BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => $daft['F'], BarcodeInterface::BCODE => []];
 
 		if ($notkix) {
 			// table for checksum calculation (row,col)
@@ -142,7 +142,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			// start bar
 			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['A'], 'p' => 0];
 			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => $daft['A'], 'p' => 0];
-			$bararray[BarcodeInterface::MAXW] += (1 + $gapWidth);
+			$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
 		}
 
 		for ($i = 0; $i < $len; ++$i) {
@@ -174,7 +174,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 
 				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
 				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
-				$bararray[BarcodeInterface::MAXW] += (1 + $gapWidth);
+				$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
 
 			}
 		}
@@ -182,7 +182,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		if ($notkix) {
 			// stop bar
 			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['F'], 'p' => 0];
-			$bararray[BarcodeInterface::MAXW] += 1;
+			$bararray[BarcodeInterface::MAX_W] += 1;
 		}
 
 		$this->data = $bararray;

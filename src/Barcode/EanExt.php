@@ -101,7 +101,7 @@ class EanExt extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			$seq .= $codes[$p[$i]][$code[$i]];
 		}
 
-		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
 
 		$this->data = $this->binseqToArray($seq, $bararray);
 	}

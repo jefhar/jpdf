@@ -81,7 +81,7 @@ class Msi extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 			$seq .= $chr[$digit];
 		}
 		$seq .= '1001'; // right guard
-		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAXW => 0, BarcodeInterface::MAXH => 1, BarcodeInterface::BCODE => []];
+		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
 		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
 
 		$this->data = $this->binseqToArray($seq, $bararray);

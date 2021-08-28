@@ -26152,7 +26152,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$llm = $arrcode['lightmL'] * $arrcode['nom-X'] * $size; // Left Light margin
 		$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
 
-		$bcw = ($arrcode[BarcodeInterface::MAXW] * $xres); // Barcode width = Should always be 31.35mm * $size
+		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
 		$fbw = $bcw + $llm + $rlm; // Full barcode width incl. light margins
 		$ow = $fbw + $paddingL + $paddingR; // Full overall width incl. user-defined padding
@@ -26411,7 +26411,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			$llm = $fbw - (($arrcode['lightmR'] - $supparrcode['sepM']) * $arrcode['nom-X'] * $size); // Left Light margin
 			$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
 
-			$bcw = ($supparrcode[BarcodeInterface::MAXW] * $xres); // Barcode width = Should always be 31.35mm * $size
+			$bcw = ($supparrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
 			$fbw = $bcw + $llm + $rlm; // Full barcode width incl. light margins
 			$ow = $fbw + $paddingL + $paddingR; // Full overall width incl. user-defined padding
@@ -26504,7 +26504,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			$tlm = $blm = $arrcode['lightTB'] * $xres * $height;
 		}
 
-		$bcw = ($arrcode[BarcodeInterface::MAXW] * $xres);
+		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres);
 		$fbw = $bcw + $llm + $rlm;  // Full barcode width incl. light margins
 
 		$bch = ($arrcode["nom-H"] * $size * $height);
@@ -26540,8 +26540,8 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			foreach ($arrcode[BarcodeInterface::BCODE] as $v) {
 				$bw = ($v["w"] * $xres);
 				if ($v["t"]) {
-					$ypos = $y + $tlm + ($bch * $v['p'] / $arrcode[BarcodeInterface::MAXH]);
-					$this->Rect($xpos, $ypos, $bw, ($v['h'] * $bch / $arrcode[BarcodeInterface::MAXH]), 'F');
+					$ypos = $y + $tlm + ($bch * $v['p'] / $arrcode[BarcodeInterface::MAX_H]);
+					$this->Rect($xpos, $ypos, $bw, ($v['h'] * $bch / $arrcode[BarcodeInterface::MAX_H]), 'F');
 				}
 				$xpos += $bw;
 			}

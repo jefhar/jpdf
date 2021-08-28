@@ -8,15 +8,15 @@ interface BarcodeInterface
     public const BCODE = 'bcode';
     public const CHECK_DIGIT = 'checkdigit';
     public const CODE = 'code';
-    public const LIGHTML = 'lightmL';
-    public const LIGHTMR = 'lightmR';
-    public const MAXH = 'maxh';
-    public const MAXW = 'maxw';
-    public const NOMH = 'nom-H';
-    public const NOMX = 'nom-X';
-    public const QUIETL = 'quietL';
-    public const QUIETR = 'quietR';
-    public const QUIETTB = 'quietTB';
+    public const LIGHT_ML = 'lightmL';
+    public const LIGHT_MR = 'lightmR';
+    public const MAX_H = 'maxh';
+    public const MAX_W = 'maxw';
+    public const NOM_H = 'nom-H';
+    public const NOM_X = 'nom-X';
+    public const QUIET_L = 'quietL';
+    public const QUIET_R = 'quietR';
+    public const QUIET_TB = 'quietTB';
     public const SEPM = 'sepM';
 
     public function getType(): string;
