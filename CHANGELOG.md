@@ -1,3 +1,6 @@
+#jPDF 8.0.10 (initial release)
+* [internal changes: Using PSR-12 and renaming variables]
+
 mPDF 8.0.x
 ===========================
 
