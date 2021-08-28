@@ -26494,7 +26494,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$xres = $arrcode[BarcodeInterface::NOM_X] * $size;
 
 		if ($btype === 'IMB' || $btype === 'RM4SCC' || $btype === 'KIX' || $btype === 'POSTNET' || $btype === 'PLANET') {
-			$llm = $arrcode['quietL'] / $k; // Left Quiet margin
+			$llm = $arrcode[BarcodeInterface::QUIET_L] / $k; // Left Quiet margin
 			$rlm = $arrcode['quietR'] / $k; // Right Quiet margin
 			$tlm = $blm = $arrcode['quietTB'] / $k;
 			$height = 1;  // Overrides

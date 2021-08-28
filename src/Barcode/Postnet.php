@@ -21,7 +21,7 @@ class Postnet extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 
 		$this->data[BarcodeInterface::NOM_X] = $xDim;
 		$this->data[BarcodeInterface::NOM_H] = 3.175; // Nominal value for Height of Full bar in mm (spec.)
-		$this->data['quietL'] = 3.175; // LEFT Quiet margin =  mm (?spec.)
+		$this->data[BarcodeInterface::QUIET_L] = 3.175; // LEFT Quiet margin =  mm (?spec.)
 		$this->data['quietR'] = 3.175; // RIGHT Quiet margin =  mm (?spec.)
 		$this->data['quietTB'] = 1.016; // TOP/BOTTOM Quiet margin =  mm (?spec.)
 	}
