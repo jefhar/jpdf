@@ -26408,7 +26408,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 				throw new \Mpdf\MpdfException('Barcode supplement incorrect: ' . $supplement_code);
 			}
 
-			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode['sepM']) * $arrcode[BarcodeInterface::NOM_X] * $size); // Left Light margin
+			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode[BarcodeInterface::SEP_M]) * $arrcode[BarcodeInterface::NOM_X] * $size); // Left Light margin
 			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode[BarcodeInterface::NOM_X] * $size; // Right Light margin
 
 			$bcw = ($supparrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size

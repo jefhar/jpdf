@@ -18,7 +18,7 @@ interface BarcodeInterface
     public const QUIET_L = 'quietL';
     public const QUIET_R = 'quietR';
     public const QUIET_TB = 'quietTB';
-    public const SEPM = 'sepM';
+    public const SEP_M = 'sepM';
 
     public function getType(): string;
 

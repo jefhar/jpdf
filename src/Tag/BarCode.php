@@ -189,7 +189,7 @@ class BarCode extends Tag
 				if ($objattr['bsupp'] == 2 || $objattr['bsupp'] == 5) { // EAN-2 or -5 Supplement
 					$supparrcode = $this->barcode->getBarcodeArray($objattr['bsupp_code'], 'EAN' . $objattr['bsupp'], '', $objattr['quiet_l'], $objattr['quiet_r']);
 					$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]
-							+ $supparrcode[BarcodeInterface::MAX_W] + $supparrcode['sepM']) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
+							+ $supparrcode[BarcodeInterface::MAX_W] + $supparrcode[BarcodeInterface::SEP_M]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
 				} else {
 					$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
 				}
