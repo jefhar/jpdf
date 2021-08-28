@@ -26150,7 +26150,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 
 		$xres = $arrcode['nom-X'] * $size;
 		$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $arrcode['nom-X'] * $size; // Left Light margin
-		$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
+		$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode['nom-X'] * $size; // Right Light margin
 
 		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
@@ -26408,8 +26408,8 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 				throw new \Mpdf\MpdfException('Barcode supplement incorrect: ' . $supplement_code);
 			}
 
-			$llm = $fbw - (($arrcode['lightmR'] - $supparrcode['sepM']) * $arrcode['nom-X'] * $size); // Left Light margin
-			$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
+			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode['sepM']) * $arrcode['nom-X'] * $size); // Left Light margin
+			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode['nom-X'] * $size; // Right Light margin
 
 			$bcw = ($supparrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
 
@@ -26500,7 +26500,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			$height = 1;  // Overrides
 		} elseif (in_array($btype, ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C', 'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B', 'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
 			$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $xres; // Left Quiet margin
-			$rlm = $arrcode['lightmR'] * $xres; // Right Quiet margin
+			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $xres; // Right Quiet margin
 			$tlm = $blm = $arrcode['lightTB'] * $xres * $height;
 		}
 
