@@ -218,7 +218,7 @@ class BarCode extends Tag
 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], '', $objattr['quiet_l'], $objattr['quiet_r']);
 
 				$w = ($arrcode[BarcodeInterface::MAX_W] * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize']) + $arrcode[BarcodeInterface::QUIET_L] + $arrcode[BarcodeInterface::QUIET_R];
-				$h = ($arrcode[BarcodeInterface::NOM_H] * $objattr['bsize']) + (2 * $arrcode[BarcodeInterface::QUIET_TB']);
+				$h = ($arrcode[BarcodeInterface::NOM_H] * $objattr['bsize']) + (2 * $arrcode[BarcodeInterface::QUIET_TB]);
 
 			} elseif (in_array($objattr['btype'], ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C',
 				'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B',
