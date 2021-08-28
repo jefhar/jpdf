@@ -54,6 +54,10 @@ $ composer require jefhar/jpdf
 ### Replacing from mPDF
 Simply change `mpdf\mpdf` to `jefhar/jpdf` in your `composer.json` file then run `composer update`.
 
+If you are using PHP 8 and have used any named arguments in your mPDF calls, please
+remove them. One of the points to jPDF is to make the code more maintainable and
+readable, and variable and argument names is one of those changes.
+
 Usage
 =====
 

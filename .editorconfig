@@ -1,17 +1,16 @@
+root = true
+
 [*]
 charset = utf-8
 end_of_line = lf
 ij_continuation_indent_size = 4
-ij_formatter_off_tag = @formatter:off
-ij_formatter_on_tag = @formatter:on
-ij_formatter_tags_enabled = false
-ij_smart_tabs = true
+ij_smart_tabs = false
 ij_visual_guides = 76, 80, 112, 116, 120
 ij_wrap_on_typing = false
 indent_size = 4
 indent_style = space
 insert_final_newline = true
-max_line_length = 120
+max_line_length = 160
 tab_width = 4
 trim_trailing_whitespace = true
 
@@ -104,8 +103,8 @@ ij_php_indent_code_in_php_tags = false
 ij_php_internal_weight = 28
 ij_php_keep_blank_lines_after_lbrace = 0
 ij_php_keep_blank_lines_before_right_brace = 0
-ij_php_keep_blank_lines_in_code = 2
-ij_php_keep_blank_lines_in_declarations = 2
+ij_php_keep_blank_lines_in_code = 1
+ij_php_keep_blank_lines_in_declarations = 1
 ij_php_keep_control_statement_in_one_line = true
 ij_php_keep_first_column_comment = true
 ij_php_keep_indents_on_empty_lines = false
@@ -220,7 +219,7 @@ ij_php_spaces_within_parentheses = false
 ij_php_spaces_within_short_echo_tags = true
 ij_php_spaces_within_switch_parentheses = false
 ij_php_spaces_within_while_parentheses = false
-ij_php_special_else_if_treatment = true
+ij_php_special_else_if_treatment = false
 ij_php_subpackage_weight = 28
 ij_php_ternary_operation_signs_on_next_line = false
 ij_php_ternary_operation_wrap = off
@@ -231,33 +230,10 @@ ij_php_upper_case_boolean_const = false
 ij_php_upper_case_null_const = false
 ij_php_uses_weight = 28
 ij_php_var_weight = 28
-ij_php_variable_naming_style = camel_case
+ij_php_variable_naming_style = mixed
 ij_php_version_weight = 28
 ij_php_while_brace_force = always
 ij_php_while_on_new_line = false
 
-[{*.har, *.jsb2, *.jsb3, *.json, .babelrc, .eslintrc, .prettierrc, .stylelintrc, bowerrc, composer.lock, jest.config}]
-ij_json_keep_blank_lines_in_code = 0
-ij_json_keep_indents_on_empty_lines = false
-ij_json_keep_line_breaks = true
-ij_json_space_after_colon = true
-ij_json_space_after_comma = true
-ij_json_space_before_colon = true
-ij_json_space_before_comma = false
-ij_json_spaces_within_braces = false
-ij_json_spaces_within_brackets = false
-ij_json_wrap_long_lines = false
-indent_size = 2
-
-[{*.markdown, *.md}]
-ij_markdown_force_one_space_after_blockquote_symbol = true
-ij_markdown_force_one_space_after_header_symbol = true
-ij_markdown_force_one_space_after_list_bullet = true
-ij_markdown_force_one_space_between_words = true
-ij_markdown_keep_indents_on_empty_lines = false
-ij_markdown_max_lines_around_block_elements = 1
-ij_markdown_max_lines_around_header = 1
-ij_markdown_max_lines_between_paragraphs = 1
-ij_markdown_min_lines_around_block_elements = 1
-ij_markdown_min_lines_around_header = 1
-ij_markdown_min_lines_between_paragraphs = 1
+[Makefile]
+indent_style = tab
