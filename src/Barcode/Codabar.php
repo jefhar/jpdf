@@ -53,7 +53,7 @@ class Codabar extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 			'D' => '11122211'
 		];
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 
 		$code = strtoupper($code);
@@ -79,7 +79,7 @@ class Codabar extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 				} else {
 					$w = 1;
 				}
-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
 				$bararray['maxw'] += $w;
 				++$k;
 			}
@@ -88,7 +88,7 @@ class Codabar extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 		$this->data = $bararray;
 	}
 
-	public function getType()
+	public function getType(): string
 	{
 		return 'CODABAR';
 	}

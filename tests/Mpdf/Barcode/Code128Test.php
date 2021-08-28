@@ -12,8 +12,8 @@ class Code128Test extends \PHPUnit_Framework_TestCase
 		$barcode = new Code128('103 33 99   12  ', 'RAW');
 		$array = $barcode->getData();
 		$this->assertInternalType('array', $array);
-		$this->assertArrayHasKey('bcode', $array);
-		$this->assertInternalType('array', $array['bcode']);
+		$this->assertArrayHasKey(BarcodeInterface::BCODE, $array);
+		$this->assertInternalType('array', $array[BarcodeInterface::BCODE]);
 	}
 
 	public function invalidCodeProvider()

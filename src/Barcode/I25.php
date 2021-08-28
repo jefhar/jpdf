@@ -62,7 +62,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 		// add start and stop codes
 		$code = 'AA' . strtolower($code) . 'ZA';
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 		$clen = strlen($code);
 		for ($i = 0; $i < $clen; $i = ($i + 2)) {
@@ -92,7 +92,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 					$w = 1;
 				}
 
-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
 				$bararray['maxw'] += $w;
 				++$k;
 			}
@@ -129,7 +129,7 @@ class I25 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barcode
 	/**
 	 * @inheritdoc
 	 */
-	public function getType()
+	public function getType(): string
 	{
 		return 'I25';
 	}

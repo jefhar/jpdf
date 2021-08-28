@@ -13,8 +13,8 @@ class EanUpcTest extends \PHPUnit_Framework_TestCase
 		$barcode = new EanUpc('9783161484100', 13, 11, 7, 0.33, 25.93);
 		$array = $barcode->getData();
 		$this->assertInternalType('array', $array);
-		$this->assertArrayHasKey('bcode', $array);
-		$this->assertInternalType('array', $array['bcode']);
+		$this->assertArrayHasKey(BarcodeInterface::BCODE, $array);
+		$this->assertInternalType('array', $array[BarcodeInterface::BCODE]);
 	}
 
 	public function invalidCodeProvider()

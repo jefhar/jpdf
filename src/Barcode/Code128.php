@@ -266,7 +266,7 @@ class Code128 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 
 		// add start, check and stop codes
 		$code = chr($startid) . $code . chr($check) . chr(106) . chr(107);
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 		$len = strlen($code);
 
@@ -290,7 +290,7 @@ class Code128 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 					$t = false; // space
 				}
 				$w = $seq[$j];
-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
 				$bararray['maxw'] += $w;
 				++$k;
 			}
@@ -300,7 +300,7 @@ class Code128 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Bar
 		$this->data = $bararray;
 	}
 
-	public function getType()
+	public function getType(): string
 	{
 		return 'CODE128';
 	}

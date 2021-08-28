@@ -81,7 +81,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$code = strtoupper($code);
 		$len = strlen($code);
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => $daft['F'], 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => $daft['F'], BarcodeInterface::BCODE => []];
 
 		if ($notkix) {
 			// table for checksum calculation (row,col)
@@ -140,8 +140,8 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 		$k = 0;
 		if ($notkix) {
 			// start bar
-			$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['A'], 'p' => 0];
-			$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => $daft['A'], 'p' => 0];
+			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['A'], 'p' => 0];
+			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => $daft['A'], 'p' => 0];
 			$bararray['maxw'] += (1 + $gapWidth);
 		}
 
@@ -172,8 +172,8 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 						break;
 				}
 
-				$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
-				$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
+				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
 				$bararray['maxw'] += (1 + $gapWidth);
 
 			}
@@ -181,7 +181,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 
 		if ($notkix) {
 			// stop bar
-			$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['F'], 'p' => 0];
+			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['F'], 'p' => 0];
 			$bararray['maxw'] += 1;
 		}
 
@@ -191,7 +191,7 @@ class Rm4Scc extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 	/**
 	 * @inheritdoc
 	 */
-	public function getType()
+	public function getType(): string
 	{
 		return 'RM4SCC';
 	}

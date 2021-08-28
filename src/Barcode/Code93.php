@@ -130,7 +130,7 @@ class Code93 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 
 		// add start and stop codes
 		$code = '*' . $code_ext . '*';
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 		$k = 0;
 		$clen = strlen($code);
 
@@ -147,13 +147,13 @@ class Code93 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 					$t = false; // space
 				}
 				$w = $chr[$char][$j];
-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
 				$bararray['maxw'] += $w;
 				++$k;
 			}
 		}
 
-		$bararray['bcode'][$k] = ['t' => true, 'w' => 1, 'h' => 1, 'p' => 0];
+		$bararray[BarcodeInterface::BCODE][$k] = ['t' => true, 'w' => 1, 'h' => 1, 'p' => 0];
 		$bararray['maxw'] += 1;
 
 		$this->data = $bararray;
@@ -218,7 +218,7 @@ class Code93 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 	/**
 	 * @inheritdoc
 	 */
-	public function getType()
+	public function getType(): string
 	{
 		return 'CODE93';
 	}

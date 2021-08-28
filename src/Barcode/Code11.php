@@ -45,7 +45,7 @@ class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 			'S' => '112211'
 		];
 
-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, BarcodeInterface::BCODE => []];
 
 		$k = 0;
 
@@ -118,7 +118,7 @@ class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 				$x = $seq[$j];
 				$w = ($x == 2) ? $printRatio : 1;
 
-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
 				$bararray['maxw'] += $w;
 
 				++$k;
@@ -133,7 +133,7 @@ class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\Barc
 	/**
 	 * @inheritdoc
 	 */
-	public function getType()
+	public function getType(): string
 	{
 		return 'CODE11';
 	}
