@@ -26149,7 +26149,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$size /= $k; // in case resized in a table
 
 		$xres = $arrcode['nom-X'] * $size;
-		$llm = $arrcode['lightmL'] * $arrcode['nom-X'] * $size; // Left Light margin
+		$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $arrcode['nom-X'] * $size; // Left Light margin
 		$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
 
 		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
@@ -26499,7 +26499,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 			$tlm = $blm = $arrcode['quietTB'] / $k;
 			$height = 1;  // Overrides
 		} elseif (in_array($btype, ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C', 'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B', 'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
-			$llm = $arrcode['lightmL'] * $xres; // Left Quiet margin
+			$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $xres; // Left Quiet margin
 			$rlm = $arrcode['lightmR'] * $xres; // Right Quiet margin
 			$tlm = $blm = $arrcode['lightTB'] * $xres * $height;
 		}
