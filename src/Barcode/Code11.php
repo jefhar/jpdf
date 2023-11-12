@@ -6,136 +6,142 @@ namespace Mpdf\Barcode;
  * CODE11 barcodes.
  * Used primarily for labeling telecommunications equipment
  */
-class Code11 extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\BarcodeInterface
+class Code11 extends AbstractBarcode
 {
+    protected array $data = [
+        self::LIGHT_TB => 0,
+        self::NOM_H => 10,
+        self::NOM_X => 0.381,
+    ];
+    protected string $type = 'CODE11';
+    private const CHARACTER_MAP = [
+        '0' => '111121',
+        '1' => '211121',
+        '2' => '121121',
+        '3' => '221111',
+        '4' => '112121',
+        '5' => '212111',
+        '6' => '122111',
+        '7' => '111221',
+        '8' => '211211',
+        '9' => '211111',
+        '-' => '112111',
+        'S' => '112211',
+    ];
 
-	/**
-	 * @param string $code
-	 * @param float $printRatio
-	 */
-	public function __construct($code, $printRatio, $quiet_zone_left = null, $quiet_zone_right = null)
-	{
-		$this->init($code, $printRatio);
+    /**
+     * Code11 constructor.
+     * @param string $code
+     * @param float $printRatio
+     * @param int|null $quiet_zone_left
+     * @param int|null $quiet_zone_right
+     * @throws BarcodeException
+     */
+    public function __construct(
+        string $code,
+        float $printRatio,
+        ?int $quiet_zone_left = null,
+        ?int $quiet_zone_right = null
+    ) {
+        $this->init($code, $printRatio);
+        $this->data[self::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10);
+        $this->data[self::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10);
+    }
 
-		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
-		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
-		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
-		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
-		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
-	}
+    /**
+     * @param string $code
+     * @param float $printRatio
+     * @throws BarcodeException
+     */
+    private function init(string $code, float $printRatio)
+    {
+        $barArray = [
+            self::BCODE => [],
+            self::CODE => $code,
+            self::MAX_H => 1,
+            self::MAX_W => 0,
+        ];
 
-	/**
-	 * @param string $code
-	 * @param float $printRatio
-	 */
-	private function init($code, $printRatio)
-	{
-		$chr = [
-			'0' => '111121',
-			'1' => '211121',
-			'2' => '121121',
-			'3' => '221111',
-			'4' => '112121',
-			'5' => '212111',
-			'6' => '122111',
-			'7' => '111221',
-			'8' => '211211',
-			'9' => '211111',
-			'-' => '112111',
-			'S' => '112211'
-		];
+        $k = 0;
 
-		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+        $stringLength = strlen($code);
+        // calculate check digit C
 
-		$k = 0;
+        $p = 1;
+        $check = 0;
 
-		$len = strlen($code);
-		// calculate check digit C
+        for ($i = ($stringLength - 1); $i >= 0; --$i) {
+            $digit = $code[$i];
+            if ($digit === '-') {
+                $digitValue = 10;
+            } else {
+                $digitValue = (int)$digit;
+            }
+            $check += ($digitValue * $p);
+            ++$p;
+            if ($p > 10) {
+                $p = 1;
+            }
+        }
 
-		$p = 1;
-		$check = 0;
+        $check %= 11;
 
-		for ($i = ($len - 1); $i >= 0; --$i) {
-			$digit = $code[$i];
-			if ($digit == '-') {
-				$dval = 10;
-			} else {
-				$dval = (int) $digit;
-			}
-			$check += ($dval * $p);
-			++$p;
-			if ($p > 10) {
-				$p = 1;
-			}
-		}
+        if ($check == 10) {
+            $check = '-';
+        }
 
-		$check %= 11;
+        $code .= $check;
+        $checkDigit = $check;
 
-		if ($check == 10) {
-			$check = '-';
-		}
+        if ($stringLength > 10) {
+            // calculate check digit K
+            $p = 1;
+            $check = 0;
+            for ($i = $stringLength; $i >= 0; --$i) {
+                $digit = $code[$i];
+                if ($digit == '-') {
+                    $digitValue = 10;
+                } else {
+                    $digitValue = (int)$digit;
+                }
+                $check += ($digitValue * $p);
+                ++$p;
+                if ($p > 9) {
+                    $p = 1;
+                }
+            }
+            $check %= 11;
+            $code .= $check;
+            $checkDigit .= $check;
+            ++$stringLength;
+        }
 
-		$code .= $check;
-		$checkdigit = $check;
+        $code = 'S' . $code . 'S';
+        $stringLength += 3;
 
-		if ($len > 10) {
-			// calculate check digit K
-			$p = 1;
-			$check = 0;
-			for ($i = $len; $i >= 0; --$i) {
-				$digit = $code[$i];
-				if ($digit == '-') {
-					$dval = 10;
-				} else {
-					$dval = (int) $digit;
-				}
-				$check += ($dval * $p);
-				++$p;
-				if ($p > 9) {
-					$p = 1;
-				}
-			}
-			$check %= 11;
-			$code .= $check;
-			$checkdigit .= $check;
-			++$len;
-		}
+        for ($i = 0; $i < $stringLength; ++$i) {
+            if (!isset($chr[$code[$i]])) {
+                throw new BarcodeException(
+                    sprintf('Invalid character "%s" in CODE11 barcode value "%s"', $code[$i], $code)
+                );
+            }
 
-		$code = 'S' . $code . 'S';
-		$len += 3;
+            $seq = $chr[$code[$i]];
 
-		for ($i = 0; $i < $len; ++$i) {
+            for ($j = 0; $j < 6; ++$j) {
+                $t = $j % 2 === 0;
+                $x = $seq[$j];
+                $w = ($x == 2) ? $printRatio : 1;
 
-			if (!isset($chr[$code[$i]])) {
-				throw new \Mpdf\Barcode\BarcodeException(sprintf('Invalid character "%s" in CODE11 barcode value "%s"', $code[$i], $code));
-			}
+                $barArray[self::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+                $barArray[self::MAX_W] += $w;
 
-			$seq = $chr[$code[$i]];
+                ++$k;
+            }
+        }
 
-			for ($j = 0; $j < 6; ++$j) {
+        $barArray[self::CHECK_DIGIT] = $checkDigit;
 
-				$t = $j % 2 === 0;
-				$x = $seq[$j];
-				$w = ($x == 2) ? $printRatio : 1;
-
-				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
-				$bararray[BarcodeInterface::MAX_W] += $w;
-
-				++$k;
-			}
-		}
-
-		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
-
-		$this->data = $bararray;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getType(): string
-	{
-		return 'CODE11';
-	}
-
+        $this->data = $barArray;
+    }
 }

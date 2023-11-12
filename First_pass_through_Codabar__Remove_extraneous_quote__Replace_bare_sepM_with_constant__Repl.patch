@@ -1,0 +1,2810 @@
+Index: .dockerignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.dockerignore b/.dockerignore
+new file mode 100644
+--- /dev/null	(revision 03a1e49b40c1e2dc7ba1bf635d2f7a6f645d8286)
++++ b/.dockerignore	(revision 03a1e49b40c1e2dc7ba1bf635d2f7a6f645d8286)
+@@ -0,0 +1,3 @@
++# Created by .ignore support plugin (hsz.mobi)
++*
++!Dockerfile
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision e15be9e1578c2e08d4f9708aa44a6d8e08db4837)
++++ b/.gitignore	(revision 03a1e49b40c1e2dc7ba1bf635d2f7a6f645d8286)
+@@ -1,2 +1,3 @@
+ vendor/*
+ composer.lock
++/.idea/*
+Index: Dockerfile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+--- /dev/null	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
++++ b/Dockerfile	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
+@@ -0,0 +1,34 @@
++# jefhar/jpdf
++# For unit testing and deployment
++# Set the base image for subsequent instructions
++FROM phpdockerio/php74-cli:latest
++ARG BUILD_DATE
++ARG VCS_REF
++
++LABEL maintainer="Jeff Harris <jeff@jeffharris.us>" \
++org.label-schema.build-date=$BUILD_DATE \
++org.label-schema.description="Fork of MPDS." \
++org.label-schema.name="main.jpdf" \
++org.label-schema.schema-version="1.0" \
++org.label-schema.url="https://jpdf.jeffharris.us" \
++org.label-schema.vcs-ref=$VCS_REF \
++org.label-schema.vcs-url="https://github.com/jefhar/jpdf" \
++PHP="7.4"
++
++# Update packages
++RUN apt-get update \
++    && apt-get -y remove php-apcu \
++        php7.4-zip \
++    && apt-get -y --no-install-recommends install \
++        php7.4-bcmath \
++        php7.4-curl \
++        php7.4-gd \
++        php7.4-mbstring \
++        php7.4-xml \
++        make \
++    && apt-get install -y --only-upgrade php7.4-cli php7.4-common \
++    && apt-get autoremove -y \
++    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
++
++# Update composer
++RUN  composer self-update
+Index: composer.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/composer.json b/composer.json
+--- a/composer.json	(revision e15be9e1578c2e08d4f9708aa44a6d8e08db4837)
++++ b/composer.json	(revision 844849bc295ffc7913067bcb1303fe6d14541f55)
+@@ -1,12 +1,16 @@
+ {
+-	"name": "mpdf/mpdf",
++	"name": "jpdf/jpdf",
+ 	"type": "library",
+-	"description": "PHP library generating PDF files from UTF-8 encoded HTML",
++	"description": "PHP library generating PDF files from UTF-8 encoded HTML. Forked from mpdf/mpdf.",
+ 	"keywords": ["php", "pdf", "utf-8"],
+-	"homepage": "https://mpdf.github.io",
++	"homepage": "https://github.com/jefhar/jpdf",
+ 	"license": ["GPL-2.0-only"],
+ 	"authors": [
+ 		{
++			"name": "Jeff Harris",
++			"role": "Developer, fork"
++		},
++		{
+ 			"name": "Matěj Humpál",
+ 			"role": "Developer, maintainer"
+ 		},
+@@ -21,7 +25,8 @@
+ 		"docs": "http://mpdf.github.io"
+ 	},
+ 	"require": {
+-		"php": "^5.6 || ^7.0 || ~8.0.0",
++		"php": "^7.4 || ~8.0.0",
++		"ext-bcmath": "*",
+ 		"ext-gd": "*",
+ 		"ext-mbstring": "*",
+ 		"myclabs/deep-copy": "^1.7",
+@@ -30,16 +35,15 @@
+ 		"setasign/fpdi": "^2.1"
+ 	},
+ 	"require-dev": {
+-		"phpunit/phpunit": "^5.7",
+ 		"mockery/mockery": "^1.3.0",
++		"mpdf/qrcode": "^1.1.0",
++		"phpunit/phpunit": "^5.7",
+ 		"squizlabs/php_codesniffer": "^3.5.0",
+-		"tracy/tracy": "^2.4",
+-		"mpdf/qrcode": "^1.1.0"
++		"tracy/tracy": "^2.4"
+ 	},
+ 	"suggest": {
+-		"ext-bcmath": "Needed for generation of some types of barcodes",
+-		"ext-zlib": "Needed for compression of embedded resources, such as fonts",
+-		"ext-xml": "Needed mainly for SVG manipulation"
++		"ext-xml": "Needed mainly for SVG manipulation",
++		"ext-zlib": "Needed for compression of embedded resources, such as fonts"
+ 	},
+ 	"autoload": {
+ 		"psr-4": {
+@@ -54,11 +58,14 @@
+ 			"src/functions-dev.php"
+ 		]
+ 	},
++  "replace": {
++    "mpdf/mpdf": "8.0.9"
++  },
+ 	"scripts": {
+ 		"post-install-cmd": [
+ 			"php -r \"chmod('./tmp', 0777);\""
+ 		],
+-		"cs": "@php vendor/bin/phpcs -v --report-width=160 --standard=ruleset.xml --severity=1 --warning-severity=0 --extensions=php src utils tests",
++		"cs": "@php vendor/bin/phpcs -v --report-width=160 --standard=PSR12 --severity=1 --warning-severity=0 --extensions=php src utils tests",
+ 		"test": "@php vendor/bin/phpunit",
+ 		"coverage": "@php vendor/bin/phpunit --coverage-text"
+ 	},
+Index: .editorconfig
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.editorconfig b/.editorconfig
+new file mode 100644
+--- /dev/null	(revision cd5c38141ea10400f74a74e815a0d908c398f8ed)
++++ b/.editorconfig	(revision cd5c38141ea10400f74a74e815a0d908c398f8ed)
+@@ -0,0 +1,239 @@
++root = true
++
++[*]
++charset = utf-8
++end_of_line = lf
++ij_continuation_indent_size = 4
++ij_smart_tabs = false
++ij_visual_guides = 76, 80, 112, 116, 120
++ij_wrap_on_typing = false
++indent_size = 4
++indent_style = space
++insert_final_newline = true
++max_line_length = 160
++tab_width = 4
++trim_trailing_whitespace = true
++
++[.editorconfig]
++ij_editorconfig_align_group_field_declarations = false
++ij_editorconfig_space_after_colon = false
++ij_editorconfig_space_after_comma = true
++ij_editorconfig_space_before_colon = false
++ij_editorconfig_space_before_comma = false
++ij_editorconfig_spaces_around_assignment_operators = true
++
++[{*.ctp, *.hphp, *.inc, *.module, *.php, *.php4, *.php5, *.phtml}]
++ij_php_align_assignments = false
++ij_php_align_class_constants = false
++ij_php_align_group_field_declarations = false
++ij_php_align_inline_comments = false
++ij_php_align_key_value_pairs = false
++ij_php_align_multiline_array_initializer_expression = false
++ij_php_align_multiline_binary_operation = false
++ij_php_align_multiline_chained_methods = false
++ij_php_align_multiline_extends_list = true
++ij_php_align_multiline_for = true
++ij_php_align_multiline_parameters = false
++ij_php_align_multiline_parameters_in_calls = false
++ij_php_align_multiline_ternary_operation = false
++ij_php_align_phpdoc_comments = false
++ij_php_align_phpdoc_param_names = false
++ij_php_anonymous_brace_style = end_of_line
++ij_php_api_weight = 28
++ij_php_array_initializer_new_line_after_left_brace = true
++ij_php_array_initializer_right_brace_on_new_line = true
++ij_php_array_initializer_wrap = on_every_item
++ij_php_assignment_wrap = off
++ij_php_attributes_wrap = off
++ij_php_author_weight = 28
++ij_php_binary_operation_sign_on_next_line = false
++ij_php_binary_operation_wrap = off
++ij_php_blank_lines_after_class_header = 0
++ij_php_blank_lines_after_function = 1
++ij_php_blank_lines_after_imports = 1
++ij_php_blank_lines_after_opening_tag = 1
++ij_php_blank_lines_after_package = 1
++ij_php_blank_lines_around_class = 1
++ij_php_blank_lines_around_constants = 0
++ij_php_blank_lines_around_field = 0
++ij_php_blank_lines_around_method = 1
++ij_php_blank_lines_before_class_end = 0
++ij_php_blank_lines_before_imports = 1
++ij_php_blank_lines_before_method_body = 0
++ij_php_blank_lines_before_package = 1
++ij_php_blank_lines_before_return_statement = 1
++ij_php_blank_lines_between_imports = 1
++ij_php_block_brace_style = end_of_line
++ij_php_call_parameters_new_line_after_left_paren = true
++ij_php_call_parameters_right_paren_on_new_line = true
++ij_php_call_parameters_wrap = on_every_item
++ij_php_catch_on_new_line = false
++ij_php_category_weight = 28
++ij_php_class_brace_style = next_line
++ij_php_comma_after_last_array_element = true
++ij_php_concat_spaces = true
++ij_php_copyright_weight = 28
++ij_php_deprecated_weight = 28
++ij_php_do_while_brace_force = always
++ij_php_else_if_style = combine
++ij_php_else_on_new_line = false
++ij_php_example_weight = 28
++ij_php_extends_keyword_wrap = off
++ij_php_extends_list_wrap = on_every_item
++ij_php_fields_default_visibility = private
++ij_php_filesource_weight = 28
++ij_php_finally_on_new_line = false
++ij_php_for_brace_force = always
++ij_php_for_statement_new_line_after_left_paren = true
++ij_php_for_statement_right_paren_on_new_line = true
++ij_php_for_statement_wrap = off
++ij_php_force_short_declaration_array_style = true
++ij_php_getters_setters_naming_style = camel_case
++ij_php_getters_setters_order_style = getters_first
++ij_php_global_weight = 28
++ij_php_group_use_wrap = on_every_item
++ij_php_if_brace_force = always
++ij_php_if_lparen_on_next_line = false
++ij_php_if_rparen_on_next_line = false
++ij_php_ignore_weight = 28
++ij_php_import_sorting = alphabetic
++ij_php_indent_break_from_case = true
++ij_php_indent_case_from_switch = true
++ij_php_indent_code_in_php_tags = false
++ij_php_internal_weight = 28
++ij_php_keep_blank_lines_after_lbrace = 0
++ij_php_keep_blank_lines_before_right_brace = 0
++ij_php_keep_blank_lines_in_code = 1
++ij_php_keep_blank_lines_in_declarations = 1
++ij_php_keep_control_statement_in_one_line = true
++ij_php_keep_first_column_comment = true
++ij_php_keep_indents_on_empty_lines = false
++ij_php_keep_line_breaks = true
++ij_php_keep_rparen_and_lbrace_on_one_line = true
++ij_php_keep_simple_classes_in_one_line = false
++ij_php_keep_simple_methods_in_one_line = false
++ij_php_lambda_brace_style = end_of_line
++ij_php_license_weight = 28
++ij_php_line_comment_add_space = false
++ij_php_line_comment_at_first_column = true
++ij_php_link_weight = 28
++ij_php_lower_case_boolean_const = true
++ij_php_lower_case_keywords = true
++ij_php_lower_case_null_const = true
++ij_php_method_brace_style = next_line
++ij_php_method_call_chain_wrap = on_every_item
++ij_php_method_parameters_new_line_after_left_paren = true
++ij_php_method_parameters_right_paren_on_new_line = true
++ij_php_method_parameters_wrap = on_every_item
++ij_php_method_weight = 28
++ij_php_modifier_list_wrap = false
++ij_php_multiline_chained_calls_semicolon_on_new_line = false
++ij_php_namespace_brace_style = 1
++ij_php_new_line_after_php_opening_tag = true
++ij_php_null_type_position = in_the_end
++ij_php_package_weight = 28
++ij_php_param_weight = 0
++ij_php_parameters_attributes_wrap = off
++ij_php_parentheses_expression_new_line_after_left_paren = false
++ij_php_parentheses_expression_right_paren_on_new_line = false
++ij_php_phpdoc_blank_line_before_tags = false
++ij_php_phpdoc_blank_lines_around_parameters = false
++ij_php_phpdoc_keep_blank_lines = true
++ij_php_phpdoc_param_spaces_between_name_and_description = 1
++ij_php_phpdoc_param_spaces_between_tag_and_type = 1
++ij_php_phpdoc_param_spaces_between_type_and_name = 1
++ij_php_phpdoc_use_fqcn = false
++ij_php_phpdoc_wrap_long_lines = false
++ij_php_place_assignment_sign_on_next_line = false
++ij_php_place_parens_for_constructor = 0
++ij_php_property_read_weight = 28
++ij_php_property_weight = 28
++ij_php_property_write_weight = 28
++ij_php_return_type_on_new_line = false
++ij_php_return_weight = 1
++ij_php_see_weight = 28
++ij_php_since_weight = 28
++ij_php_sort_phpdoc_elements = true
++ij_php_space_after_colon = true
++ij_php_space_after_colon_in_named_argument = true
++ij_php_space_after_colon_in_return_type = true
++ij_php_space_after_comma = true
++ij_php_space_after_for_semicolon = true
++ij_php_space_after_quest = true
++ij_php_space_after_type_cast = false
++ij_php_space_after_unary_not = false
++ij_php_space_before_array_initializer_left_brace = false
++ij_php_space_before_catch_keyword = true
++ij_php_space_before_catch_left_brace = true
++ij_php_space_before_catch_parentheses = true
++ij_php_space_before_class_left_brace = true
++ij_php_space_before_closure_left_parenthesis = true
++ij_php_space_before_colon = true
++ij_php_space_before_colon_in_named_argument = false
++ij_php_space_before_colon_in_return_type = false
++ij_php_space_before_comma = false
++ij_php_space_before_do_left_brace = true
++ij_php_space_before_else_keyword = true
++ij_php_space_before_else_left_brace = true
++ij_php_space_before_finally_keyword = true
++ij_php_space_before_finally_left_brace = true
++ij_php_space_before_for_left_brace = true
++ij_php_space_before_for_parentheses = true
++ij_php_space_before_for_semicolon = false
++ij_php_space_before_if_left_brace = true
++ij_php_space_before_if_parentheses = true
++ij_php_space_before_method_call_parentheses = false
++ij_php_space_before_method_left_brace = true
++ij_php_space_before_method_parentheses = false
++ij_php_space_before_quest = true
++ij_php_space_before_short_closure_left_parenthesis = false
++ij_php_space_before_switch_left_brace = true
++ij_php_space_before_switch_parentheses = true
++ij_php_space_before_try_left_brace = true
++ij_php_space_before_unary_not = false
++ij_php_space_before_while_keyword = true
++ij_php_space_before_while_left_brace = true
++ij_php_space_before_while_parentheses = true
++ij_php_space_between_ternary_quest_and_colon = false
++ij_php_spaces_around_additive_operators = true
++ij_php_spaces_around_arrow = false
++ij_php_spaces_around_assignment_in_declare = false
++ij_php_spaces_around_assignment_operators = true
++ij_php_spaces_around_bitwise_operators = true
++ij_php_spaces_around_equality_operators = true
++ij_php_spaces_around_logical_operators = true
++ij_php_spaces_around_multiplicative_operators = true
++ij_php_spaces_around_null_coalesce_operator = true
++ij_php_spaces_around_relational_operators = true
++ij_php_spaces_around_shift_operators = true
++ij_php_spaces_around_unary_operator = false
++ij_php_spaces_around_var_within_brackets = false
++ij_php_spaces_within_array_initializer_braces = false
++ij_php_spaces_within_brackets = false
++ij_php_spaces_within_catch_parentheses = false
++ij_php_spaces_within_for_parentheses = false
++ij_php_spaces_within_if_parentheses = false
++ij_php_spaces_within_method_call_parentheses = false
++ij_php_spaces_within_method_parentheses = false
++ij_php_spaces_within_parentheses = false
++ij_php_spaces_within_short_echo_tags = true
++ij_php_spaces_within_switch_parentheses = false
++ij_php_spaces_within_while_parentheses = false
++ij_php_special_else_if_treatment = false
++ij_php_subpackage_weight = 28
++ij_php_ternary_operation_signs_on_next_line = false
++ij_php_ternary_operation_wrap = off
++ij_php_throws_weight = 2
++ij_php_todo_weight = 28
++ij_php_unknown_tag_weight = 28
++ij_php_upper_case_boolean_const = false
++ij_php_upper_case_null_const = false
++ij_php_uses_weight = 28
++ij_php_var_weight = 28
++ij_php_variable_naming_style = mixed
++ij_php_version_weight = 28
++ij_php_while_brace_force = always
++ij_php_while_on_new_line = false
++
++[Makefile]
++indent_style = tab
+Index: CHANGELOG.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+--- a/CHANGELOG.md	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
++++ b/CHANGELOG.md	(revision 844849bc295ffc7913067bcb1303fe6d14541f55)
+@@ -1,3 +1,6 @@
++#jPDF 8.0.10 (initial release)
++* [internal changes: Using PSR-12 and renaming variables]
++
+ mPDF 8.0.x
+ ===========================
+ 
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
++++ b/README.md	(revision cd5c38141ea10400f74a74e815a0d908c398f8ed)
+@@ -1,15 +1,17 @@
+-mPDF is a PHP library which generates PDF files from UTF-8 encoded HTML.
++jPDF is a PHP library which generates PDF files from UTF-8 encoded HTML.
+ 
+-It is based on [FPDF](http://www.fpdf.org/) and [HTML2FPDF](http://html2fpdf.sourceforge.net/)
++It is forked from [mPDF](https://mpdf.github.io/) which is based on [FPDF](http://www.fpdf.org/) and [HTML2FPDF](http://html2fpdf.sourceforge.net/)
+ (see [CREDITS](CREDITS.txt)), with a number of enhancements. mPDF was written by Ian Back and is released
+-under the [GNU GPL v2 licence](LICENSE.txt).
++under the [GNU GPL v2 licence](LICENSE.txt). It is intended as a drop-in replacement for mPDF, just with code enhancements
++and dropping support for PHP versions less than 7.4.
+ 
++<!--
+ [![Latest Stable Version](https://poser.pugx.org/mpdf/mpdf/v/stable)](https://packagist.org/packages/mpdf/mpdf)
+ [![Total Downloads](https://poser.pugx.org/mpdf/mpdf/downloads)](https://packagist.org/packages/mpdf/mpdf)
+ [![License](https://poser.pugx.org/mpdf/mpdf/license)](https://packagist.org/packages/mpdf/mpdf)
++-->
+ 
+-
+-> ⚠ If you are viewing this file on mPDF GitHub repository homepage or on Packagist, please note that
++> ⚠ If you are viewing this file on jpdf GitHub repository homepage or on Packagist, please note that
+ > the default repository branch is `development` which can differ from the last stable release.
+ 
+ Requirements
+@@ -18,37 +20,43 @@
+ PHP versions and extensions
+ ---------------------------
+ 
+-- `mPDF >=7.0` is supported on `PHP ^5.6 || ~7.0.0 || ~7.1.0 || ~7.2.0`
+-- `PHP 7.3` is supported since `mPDF v7.1.7`
+ - `PHP 7.4` is supported since `mPDF v8.0.4`
+ - `PHP 8.0` is supported since `mPDF v8.0.10`
++- `jPDF` requires `PHP 7.4` and later
+ 
+-PHP `mbstring` and `gd` extensions have to be loaded.
++PHP `mbstring`, `gd`, and `bcmath` extensions have to be loaded.
+ 
+ Additional extensions may be required for some advanced features such as `zlib` for compression of output and
+-embedded resources such as fonts, `bcmath` for generating barcodes or `xml` for character set conversion
++embedded resources such as fonts, or `xml` for character set conversion
+ and SVG handling.
+ 
+ Known server caveats
+ --------------------
+ 
+-mPDF has some problems with fetching external HTTP resources with single threaded servers such as `php -S`. A proper
++jpdf has some problems with fetching external HTTP resources with single threaded servers such as `php -S`. A proper
+ server such as nginx (php-fpm) or Apache is recommended.
+ 
+ Support us
+ ==========
+-
+-Consider supporting development of mPDF with a donation of any value. [Donation button][1] can be found on the
++<!--
++Consider supporting development of jpdf with a donation of any value. [Donation button][1] can be found on the
+ [main page of the documentation][1].
+-
++-->
+ Installation
+ ============
+ 
+ Official installation method is via composer and its packagist package [mpdf/mpdf](https://packagist.org/packages/mpdf/mpdf).
+ 
+ ```
+-$ composer require mpdf/mpdf
++$ composer require jefhar/jpdf
+ ```
++
++### Replacing from mPDF
++Simply change `mpdf\mpdf` to `jefhar/jpdf` in your `composer.json` file then run `composer update`.
++
++If you are using PHP 8 and have used any named arguments in your mPDF calls, please
++remove them. One of the points to jPDF is to make the code more maintainable and
++readable, and variable and argument names is one of those changes.
+ 
+ Usage
+ =====
+@@ -60,9 +68,9 @@
+ 
+ require_once __DIR__ . '/vendor/autoload.php';
+ 
+-$mpdf = new \Mpdf\Mpdf();
+-$mpdf->WriteHTML('<h1>Hello world!</h1>');
+-$mpdf->Output();
++$jpdf = new \Mpdf\Mpdf();
++$jpdf->WriteHTML('<h1>Hello world!</h1>');
++$jpdf->Output();
+ 
+ ```
+ 
+@@ -75,16 +83,16 @@
+ be set by the `$config` parameter of the constructor.
+ 
+ It is recommended to set one's own temporary directory via `tempDir` configuration variable.
+-The directory must have write permissions (mode `775` is recommended) for users using mPDF
++The directory must have write permissions (mode `775` is recommended) for users using jPDF
+ (typically `cli`, `webserver`, `fpm`).
+ 
+-**Warning:** mPDF will clean up old temporary files in the temporary directory. Choose a path dedicated to mPDF only.
++**Warning:** jPDF will clean up old temporary files in the temporary directory. Choose a path dedicated to jPDF only.
+ 
+ 
+ ```php
+ <?php
+ 
+-$mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ . '/tmp']);
++$jpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ . '/tmp']);
+ 
+ ```
+ 
+@@ -118,14 +126,14 @@
+ Unit Testing
+ ============
+ 
+-Unit testing for mPDF is done using [PHPUnit](https://phpunit.de/).
++Unit testing for jPDF is done using [PHPUnit](https://phpunit.de/).
+ 
+-To get started, run `composer install` from the command line while in the mPDF root directory
++To get started, run `composer install` from the command line while in the jPDF root directory
+ (you'll need [composer installed first](https://getcomposer.org/download/)).
+ 
+-To execute tests, run `composer test` from the command line while in the mPDF root directory.
++To execute tests, run `composer test` from the command line while in the jPDF root directory.
+ 
+-Any assistance writing unit tests for mPDF is greatly appreciated. If you'd like to help, please
++Any assistance writing unit tests for jPDF is greatly appreciated. If you'd like to help, please
+ note that any PHP file located in the `/tests/` directory will be autoloaded when unit testing.
+ 
+ [1]: https://mpdf.github.io
+Index: src/Barcode.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode.php b/src/Barcode.php
+--- a/src/Barcode.php	(revision 844849bc295ffc7913067bcb1303fe6d14541f55)
++++ b/src/Barcode.php	(revision cd5c38141ea10400f74a74e815a0d908c398f8ed)
+@@ -2,152 +2,274 @@
+ 
+ namespace Mpdf;
+ 
++use Mpdf\Barcode\BarcodeInterface;
++
+ class Barcode
+ {
++    private const XDIM_MAIL = 0.508; // Nominal value for X-dim (bar width) in mm (spec.) mailing codes.
++    private const XDIM = 0.33;
++    private const BPI = 22; // Bars per inch
+ 
+-	public function getBarcodeArray($code, $type, $pr = '', $quiet_zone_left = null, $quiet_zone_right = null)
+-	{
+-		$barcode = $this->getBarcode($code, $type, $pr, $quiet_zone_left, $quiet_zone_right);
+-		return $barcode ? $barcode->getData() : false;
+-	}
++    /**
++     * @param string $code
++     * @param string $type
++     * @param float $printRatio
++     * @param ?int $quiet_zone_left
++     * @param ?int $quiet_zone_right
++     * @return false|mixed[]
++     * @throws Barcode\BarcodeException
++     */
++    public function getBarcodeArray(
++        string $code,
++        string $type,
++        float $printRatio = 0.0,
++        ?int $quiet_zone_left = null,
++        ?int $quiet_zone_right = null
++    ) {
++        $barcode = $this->getBarcode($code, $type, $printRatio, $quiet_zone_left, $quiet_zone_right);
++
++        return $barcode ? $barcode->getData() : false;
++    }
+ 
+-	public function getChecksum($code, $type)
+-	{
+-		$barcode = $this->getBarcode($code, $type);
+-		return $barcode ? $barcode->getChecksum() : false;
+-	}
+-
+-	/**
+-	 * @param string $code
+-	 * @param string $type
+-	 * @param float $pr
+-	 *
+-	 * @return \Mpdf\Barcode\BarcodeInterface
+-	 */
+-	public function getBarcode($code, $type, $pr = 0.0, $quiet_zone_left = null, $quiet_zone_right = null)
+-	{
+-		switch (strtoupper($type)) {
+-			case 'ISBN':
+-			case 'ISSN':
+-			case 'EAN13': // EAN 13
+-				return new Barcode\EanUpc($code, 13, 11, 7, 0.33, 25.93);
++    /**
++     * @param string $code
++     * @param string $type
++     * @param float $printRatio
++     * @param int|null $quiet_zone_left
++     * @param int|null $quiet_zone_right
++     * @return BarcodeInterface|false
++     * @throws Barcode\BarcodeException
++     */
++    public function getBarcode(
++        string $code,
++        string $type,
++        float $printRatio = 0.0,
++        ?int $quiet_zone_left = null,
++        ?int $quiet_zone_right = null
++    ) {
++        switch (strtoupper($type)) {
++            case 'ISBN':
++            case 'ISSN':
++            case 'EAN13': // EAN 13
++                return new Barcode\EanUpc($code, 13, 11, 7, self::XDIM, 25.93);
+ 
+-			case 'UPCA': // UPC-A
+-				return new Barcode\EanUpc($code, 12, 9, 9, 0.33, 25.91);
++            case 'UPCA': // UPC-A
++                return new Barcode\EanUpc($code, 12, 9, 9, self::XDIM, 25.91);
+ 
+-			case 'UPCE': // UPC-E
+-				return new Barcode\EanUpc($code, 6, 9, 7, 0.33, 25.93);
++            case 'UPCE': // UPC-E
++                return new Barcode\EanUpc($code, 6, 9, 7, self::XDIM, 25.93);
+ 
+-			case 'EAN8': // EAN 8
+-				return new Barcode\EanUpc($code, 8, 7, 7, 0.33, 21.64);
++            case 'EAN8': // EAN 8
++                return new Barcode\EanUpc($code, 8, 7, 7, self::XDIM, 21.64);
+ 
+-			case 'EAN2': // 2-Digits UPC-Based Extention
+-				return new Barcode\EanExt($code, 2, 7, 7, 0.33, 20, 9);
++            case 'EAN2': // 2-Digits UPC-Based Extention
++                return new Barcode\EanExt($code, 2, 7, 7, self::XDIM, 20, 9);
+ 
+-			case 'EAN5': // 5-Digits UPC-Based Extention
+-				return new Barcode\EanExt($code, 5, 7, 7, 0.33, 20, 9);
++            case 'EAN5': // 5-Digits UPC-Based Extention
++                return new Barcode\EanExt($code, 5, 7, 7, self::XDIM, 20, 9);
+ 
+-			case 'IMB': // IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
+-				$xdim = 0.508; // Nominal value for X-dim (bar width) in mm (spec.)
+-				$bpi = 22; // Bars per inch
+-				return new Barcode\Imb($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, ['D' => 2, 'A' => 2, 'F' => 3, 'T' => 1]);
++            case 'IMB': // IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
++                $xdim = self::XDIM_MAIL;
++                $bpi = self::BPI;
++
++                return new Barcode\Imb(
++                    $code,
++                    $xdim,
++                    ((25.4 / $bpi) - $xdim) / $xdim,
++                    ['D' => 2, 'A' => 2, 'F' => 3, 'T' => 1]
++                );
+ 
+-			case 'RM4SCC': // RM4SCC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)
+-				$xdim = 0.508; // Nominal value for X-dim (bar width) in mm (spec.)
+-				$bpi = 22; // Bars per inch
+-				return new Barcode\Rm4Scc($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, ['D' => 5, 'A' => 5, 'F' => 8, 'T' => 2]);
++            case 'RM4SCC': // RM4SCC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)
++                $xdim = self::XDIM_MAIL;
++                $bpi = self::BPI;
++
++                return new Barcode\Rm4Scc(
++                    $code,
++                    $xdim,
++                    ((25.4 / $bpi) - $xdim) / $xdim,
++                    ['D' => 5, 'A' => 5, 'F' => 8, 'T' => 2]
++                );
+ 
+-			case 'KIX': // KIX (Klant index - Customer index)
+-				$xdim = 0.508; // Nominal value for X-dim (bar width) in mm (spec.)
+-				$bpi = 22; // Bars per inch
+-				return new Barcode\Rm4Scc($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, ['D' => 5, 'A' => 5, 'F' => 8, 'T' => 2], true);
++            case 'KIX': // KIX (Klant index - Customer index)
++                $xdim = self::XDIM_MAIL;
++                $bpi = self::BPI;
++
++                return new Barcode\Rm4Scc(
++                    $code,
++                    $xdim,
++                    ((25.4 / $bpi) - $xdim) / $xdim,
++                    ['D' => 5, 'A' => 5, 'F' => 8, 'T' => 2],
++                    true
++                );
+ 
+-			case 'POSTNET': // POSTNET
+-				$xdim = 0.508; // Nominal value for X-dim (bar width) in mm (spec.)
+-				$bpi = 22; // Bars per inch
+-				return new Barcode\Postnet($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, false);
++            case 'POSTNET': // POSTNET
++                $xdim = self::XDIM_MAIL;
++                $bpi = self::BPI;
++
++                return new Barcode\Postnet($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, false);
+ 
+-			case 'PLANET': // PLANET
+-				$xdim = 0.508; // Nominal value for X-dim (bar width) in mm (spec.)
+-				$bpi = 22; // Bars per inch
+-				return new Barcode\Postnet($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, true);
++            case 'PLANET': // PLANET
++                $xdim = self::XDIM_MAIL;
++                $bpi = self::BPI;
++
++                return new Barcode\Postnet($code, $xdim, ((25.4 / $bpi) - $xdim) / $xdim, true);
+ 
+-			case 'C93': // CODE 93 - USS-93
+-				return new Barcode\Code93($code, $quiet_zone_left, $quiet_zone_right);
++            case 'C93': // CODE 93 - USS-93
++                return new Barcode\Code93($code, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'CODE11': // CODE 11
+-				return new Barcode\Code11($code, ($pr > 0) ? $pr : 3, $quiet_zone_left, $quiet_zone_right);
++            case 'CODE11': // CODE 11
++                return new Barcode\Code11(
++                    $code,
++                    ($printRatio > 0) ? $printRatio : 3,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'MSI':  // MSI (Variation of Plessey code)
+-				return new Barcode\Msi($code, false, $quiet_zone_left, $quiet_zone_right);
++            case 'MSI':  // MSI (Variation of Plessey code)
++                return new Barcode\Msi($code, false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'MSI+': // MSI + CHECKSUM (modulo 11)
+-				return new Barcode\Msi($code, true, $quiet_zone_left, $quiet_zone_right);
++            case 'MSI+': // MSI + CHECKSUM (modulo 11)
++                return new Barcode\Msi($code, true, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'CODABAR': // CODABAR
+-				return new Barcode\Codabar($code, ($pr > 0) ? $pr : 2.5, $quiet_zone_left, $quiet_zone_right);
++            case 'CODABAR': // CODABAR
++                return new Barcode\Codabar(
++                    $code,
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'C128A': // CODE 128 A
+-				return new Barcode\Code128($code, 'A', false, $quiet_zone_left, $quiet_zone_right);
++            case 'C128A': // CODE 128 A
++                return new Barcode\Code128($code, 'A', false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'C128B': // CODE 128 B
+-				return new Barcode\Code128($code, 'B', false, $quiet_zone_left, $quiet_zone_right);
++            case 'C128B': // CODE 128 B
++                return new Barcode\Code128($code, 'B', false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'C128C':  // CODE 128 C
+-				return new Barcode\Code128($code, 'C', false, $quiet_zone_left, $quiet_zone_right);
++            case 'C128C':  // CODE 128 C
++                return new Barcode\Code128($code, 'C', false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'C128RAW':  // CODE 128 RAW -- code is a space separated list of codes with startcode but without checkdigit,stop,end ex: "105 12 34"
+-				return new Barcode\Code128($code, 'RAW', false, $quiet_zone_left, $quiet_zone_right);
++            case 'C128RAW':  // CODE 128 RAW -- code is a space separated list of codes
++                // with startcode but without checkdigit,stop,end ex: "105 12 34"
++                return new Barcode\Code128($code, 'RAW', false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'EAN128A':  // EAN 128 A
+-				return new Barcode\Code128($code, 'A', true, $quiet_zone_left, $quiet_zone_right);
++            case 'EAN128A':  // EAN 128 A
++                return new Barcode\Code128($code, 'A', true, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'EAN128B':  // EAN 128 B
+-				return new Barcode\Code128($code, 'B', true, $quiet_zone_left, $quiet_zone_right);
++            case 'EAN128B':  // EAN 128 B
++                return new Barcode\Code128($code, 'B', true, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'EAN128C': // EAN 128 C
+-				return new Barcode\Code128($code, 'C', true, $quiet_zone_left, $quiet_zone_right);
++            case 'EAN128C': // EAN 128 C
++                return new Barcode\Code128($code, 'C', true, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'C39':  // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.
+-				return new Barcode\Code39($this->sanitizeCode($code), ($pr > 0) ? $pr : 2.5, false, false, $quiet_zone_left, $quiet_zone_right);
++            case 'C39':  // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.
++                return new Barcode\Code39(
++                    $this->sanitizeCode($code),
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    false,
++                    false,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'C39+': // CODE 39 with checksum
+-				return new Barcode\Code39($this->sanitizeCode($code), ($pr > 0) ? $pr : 2.5, false, true, $quiet_zone_left, $quiet_zone_right);
++            case 'C39+': // CODE 39 with checksum
++                return new Barcode\Code39(
++                    $this->sanitizeCode($code),
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    false,
++                    true,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'C39E': // CODE 39 EXTENDED
+-				return new Barcode\Code39($this->sanitizeCode($code), ($pr > 0) ? $pr : 2.5, true, false, $quiet_zone_left, $quiet_zone_right);
++            case 'C39E': // CODE 39 EXTENDED
++                return new Barcode\Code39(
++                    $this->sanitizeCode($code),
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    true,
++                    false,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'C39E+': // CODE 39 EXTENDED + CHECKSUM
+-				return new Barcode\Code39($this->sanitizeCode($code), ($pr > 0) ? $pr : 2.5, true, true, $quiet_zone_left, $quiet_zone_right);
++            case 'C39E+': // CODE 39 EXTENDED + CHECKSUM
++                return new Barcode\Code39(
++                    $this->sanitizeCode($code),
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    true,
++                    true,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'S25':  // Standard 2 of 5
+-				return new Barcode\S25($code, false, $quiet_zone_left, $quiet_zone_right);
++            case 'S25':  // Standard 2 of 5
++                return new Barcode\S25($code, false, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'S25+': // Standard 2 of 5 + CHECKSUM
+-				return new Barcode\S25($code, true, $quiet_zone_left, $quiet_zone_right);
++            case 'S25+': // Standard 2 of 5 + CHECKSUM
++                return new Barcode\S25($code, true, $quiet_zone_left, $quiet_zone_right);
+ 
+-			case 'I25':  // Interleaved 2 of 5
+-				return new Barcode\I25($code, 0, ($pr > 0) ? $pr : 2.5, false, $quiet_zone_left, $quiet_zone_right);
++            case 'I25':  // Interleaved 2 of 5
++                return new Barcode\I25(
++                    $code,
++                    0,
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    false,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'I25+': // Interleaved 2 of 5 + CHECKSUM
+-				return new Barcode\I25($code, 0, ($pr > 0) ? $pr : 2.5, true, $quiet_zone_left, $quiet_zone_right);
++            case 'I25+': // Interleaved 2 of 5 + CHECKSUM
++                return new Barcode\I25(
++                    $code,
++                    0,
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    true,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'I25B':  // Interleaved 2 of 5 + Bearer bars
+-				return new Barcode\I25($code, 2, ($pr > 0) ? $pr : 2.5, false, $quiet_zone_left, $quiet_zone_right);
++            case 'I25B':  // Interleaved 2 of 5 + Bearer bars
++                return new Barcode\I25(
++                    $code,
++                    2,
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    false,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
+ 
+-			case 'I25B+': // Interleaved 2 of 5 + CHECKSUM + Bearer bars
+-				return new Barcode\I25($code, 2, ($pr > 0) ? $pr : 2.5, true, $quiet_zone_left, $quiet_zone_right);
+-		}
++            case 'I25B+': // Interleaved 2 of 5 + CHECKSUM + Bearer bars
++                return new Barcode\I25(
++                    $code,
++                    2,
++                    ($printRatio > 0) ? $printRatio : 2.5,
++                    true,
++                    $quiet_zone_left,
++                    $quiet_zone_right
++                );
++        }
+ 
+-		return false;
+-	}
++        // todo : throw error
++        return false;
++    }
+ 
+-	private function sanitizeCode($code)
+-	{
+-		$code = str_replace(chr(194) . chr(160), ' ', $code); // mPDF 5.3.95  (for utf-8 encoded)
+-		$code = str_replace(chr(160), ' ', $code); // mPDF 5.3.95	(for win-1252)
++    private function sanitizeCode($code)
++    {
++        $code = str_replace(chr(194) . chr(160), ' ', $code); // mPDF 5.3.95  (for utf-8 encoded)
++        $code = str_replace(chr(160), ' ', $code); // mPDF 5.3.95   (for win-1252)
+ 
+-		return $code;
+-	}
++        return $code;
++    }
+ 
++    /**
++     * @param string $code
++     * @param string $type
++     * @return false|string|null
++     * @throws Barcode\BarcodeException
++     */
++    public function getChecksum(string $code, string $type)
++    {
++        $barcode = $this->getBarcode($code, $type);
++
++        return $barcode ? $barcode->getChecksum() : false;
++    }
+ }
+Index: src/Barcode/BarcodeInterface.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/BarcodeInterface.php b/src/Barcode/BarcodeInterface.php
+--- a/src/Barcode/BarcodeInterface.php	(revision cd5c38141ea10400f74a74e815a0d908c398f8ed)
++++ b/src/Barcode/BarcodeInterface.php	(revision 97b3f5a3cf39ecb9c5840efa8de7da0ec8c01ff2)
+@@ -4,27 +4,41 @@
+ 
+ interface BarcodeInterface
+ {
++    // Array keys
++    public const BCODE = 'bcode';
++    public const CHECK_DIGIT = 'checkdigit';
++    public const CODE = 'code';
++
++    // LEFT light margin =  x X-dim (spec.)
++    public const LIGHT_ML = 'lightmL';
++
++    // RIGHT light margin =  x X-dim (spec.)
++    public const LIGHT_MR = 'lightmR';
++
++    // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++    public const LIGHT_TB = 'lightTB';
++    public const MAX_H = 'maxh';
++    public const MAX_W = 'maxw';
+ 
+-	/**
+-	 * @return string
+-	 */
+-	public function getType();
++// Nominal value for Height of Full bar in mm (non-spec.)
++    public const NOM_H = 'nom-H';
++
++    // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++    public const NOM_X = 'nom-X';
++    public const QUIET_L = 'quietL';
++    public const QUIET_R = 'quietR';
++    public const QUIET_TB = 'quietTB';
++    public const SEP_M = 'sepM';
+ 
+-	/**
+-	 * @return mixed[]
+-	 */
+-	public function getData();
++    public function getType(): string;
++
++    public function getData(): array;
+ 
+-	/**
+-	 * @param string $key
+-	 *
+-	 * @return mixed
+-	 */
+-	public function getKey($key);
++    /**
++     * @return mixed
++     */
++    public function getKey(string $key);
+ 
+-	/**
+-	 * @return string
+-	 */
+-	public function getChecksum();
++    public function getChecksum(): string;
+ 
+ }
+Index: src/Barcode/AbstractBarcode.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/AbstractBarcode.php b/src/Barcode/AbstractBarcode.php
+--- a/src/Barcode/AbstractBarcode.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/AbstractBarcode.php	(revision 97b3f5a3cf39ecb9c5840efa8de7da0ec8c01ff2)
+@@ -2,68 +2,57 @@
+ 
+ namespace Mpdf\Barcode;
+ 
+-abstract class AbstractBarcode
++abstract class AbstractBarcode implements BarcodeInterface
+ {
++    protected string $type;
++    protected array $data;
+ 
+-	/**
+-	 * @var mixed[]
+-	 */
+-	protected $data;
+-
+-	/**
+-	 * @return mixed[]
+-	 */
+-	public function getData()
+-	{
+-		return $this->data;
+-	}
++    public function getData(): array
++    {
++        return $this->data;
++    }
+ 
+-	/**
+-	 * @param string $key
+-	 *
+-	 * @return mixed
+-	 */
+-	public function getKey($key)
+-	{
+-		return isset($this->data[$key]) ? $this->data[$key] : null;
+-	}
++    public function getType(): string
++    {
++        return $this->type;
++    }
++
++    /**
++     * @return mixed
++     */
++    public function getKey(string $key)
++    {
++        return isset($this->data[$key]) ? $this->data[$key] : null;
++    }
+ 
+-	/**
+-	 * @return string
+-	 */
+-	public function getChecksum()
+-	{
+-		return $this->getKey('checkdigit');
+-	}
++    public function getChecksum(): string
++    {
++        return $this->getKey(self::CHECK_DIGIT);
++    }
+ 
+-	/**
+-	 * Convert binary barcode sequence to barcode array
+-	 *
+-	 * @param string $seq
+-	 * @param mixed[] $barcodeData
+-	 *
+-	 * @return mixed[]
+-	 */
+-	protected function binseqToArray($seq, array $barcodeData)
+-	{
+-		$len = strlen($seq);
+-		$w = 0;
+-		$k = 0;
+-		for ($i = 0; $i < $len; ++$i) {
+-			$w += 1;
+-			if (($i == ($len - 1)) or (($i < ($len - 1)) and ($seq[$i] != $seq[($i + 1)]))) {
+-				if ($seq[$i] == '1') {
+-					$t = true; // bar
+-				} else {
+-					$t = false; // space
+-				}
+-				$barcodeData['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$barcodeData['maxw'] += $w;
+-				++$k;
+-				$w = 0;
+-			}
+-		}
+-		return $barcodeData;
+-	}
++    /**
++     * Convert binary barcode sequence to barcode array
++     */
++    protected function binseqToArray(string $sequence, array $barcodeData): array
++    {
++        $sequenceLength = strlen($sequence);
++        $w = 0;
++        $k = 0;
++        for ($i = 0; $i < $sequenceLength; ++$i) {
++            $w += 1;
++            if (
++                ($i == ($sequenceLength - 1))
++                || (($i < ($sequenceLength - 1)) && ($sequence[$i] != $sequence[($i + 1)]))
++            ) {
++                $t = $sequence[$i] == '1';
++                $barcodeData[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++                $barcodeData[BarcodeInterface::MAX_W] += $w;
++                ++$k;
++                $w = 0;
++            }
++        }
++
++        return $barcodeData;
++    }
+ 
+ }
+Index: src/Barcode/Codabar.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Codabar.php b/src/Barcode/Codabar.php
+--- a/src/Barcode/Codabar.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Codabar.php	(revision 97b3f5a3cf39ecb9c5840efa8de7da0ec8c01ff2)
+@@ -6,91 +6,94 @@
+  * CODABAR barcodes.
+  * Older code often used in library systems, sometimes in blood banks
+  */
+-class Codabar extends \Mpdf\Barcode\AbstractBarcode implements \Mpdf\Barcode\BarcodeInterface
++class Codabar extends AbstractBarcode
+ {
+-
+-	/**
+-	 * @param string $code
+-	 * @param float $printRatio
+-	 */
+-	public function __construct($code, $printRatio, $quiet_zone_left = null, $quiet_zone_right = null)
+-	{
+-		$this->init($code, $printRatio);
+-
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10; // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+-	}
+-
+-	/**
+-	 * @param string $code
+-	 * @param float $printRatio
+-	 */
+-	private function init($code, $printRatio)
+-	{
+-		$chr = [
+-			'0' => '11111221',
+-			'1' => '11112211',
+-			'2' => '11121121',
+-			'3' => '22111111',
+-			'4' => '11211211',
+-			'5' => '21111211',
+-			'6' => '12111121',
+-			'7' => '12112111',
+-			'8' => '12211111',
+-			'9' => '21121111',
+-			'-' => '11122111',
+-			'$' => '11221111',
+-			':' => '21112121',
+-			'/' => '21211121',
+-			'.' => '21212111',
+-			'+' => '11222221',
+-			'A' => '11221211',
+-			'B' => '12121121',
+-			'C' => '11121221',
+-			'D' => '11122211'
+-		];
++    protected string $type = 'CODABAR';
++    private const CHARACTER_MAP = [
++        '0' => '11111221',
++        '1' => '11112211',
++        '2' => '11121121',
++        '3' => '22111111',
++        '4' => '11211211',
++        '5' => '21111211',
++        '6' => '12111121',
++        '7' => '12112111',
++        '8' => '12211111',
++        '9' => '21121111',
++        '-' => '11122111',
++        '$' => '11221111',
++        ':' => '21112121',
++        '/' => '21211121',
++        '.' => '21212111',
++        '+' => '11222221',
++        'A' => '11221211',
++        'B' => '12121121',
++        'C' => '11121221',
++        'D' => '11122211',
++    ];
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+-		$k = 0;
++    /**
++     * Codabar constructor.
++     * @param string $code
++     * @param float $printRatio
++     * @param int|null $quietZoneLeft
++     * @param int|null $quietZoneRight
++     * @throws BarcodeException
++     */
++    public function __construct(
++        string $code,
++        float $printRatio,
++        ?int $quietZoneLeft = null,
++        ?int $quietZoneRight = null
++    ) {
++        $this->init(strtoupper($code), $printRatio);
++
++        $this->data[self::NOM_X] = 0.381;
++        $this->data[self::NOM_H] = 10;
++        $this->data[self::LIGHT_ML] = ($quietZoneLeft !== null ? $quietZoneLeft : 10);
++        $this->data[self::LIGHT_MR] = ($quietZoneRight !== null ? $quietZoneRight : 10);
++        $this->data[self::LIGHT_TB] = 0;
++    }
++
++    /**
++     * @param string $code
++     * @param float $printRatio
++     * @throws BarcodeException
++     */
++    private function init(string $code, float $printRatio)
++    {
++        $barArray = [
++            BarcodeInterface::CODE => $code,
++            BarcodeInterface::MAX_W => 0,
++            BarcodeInterface::MAX_H => 1,
++            BarcodeInterface::BCODE => [],
++        ];
++        $k = 0;
+ 
+-		$code = strtoupper($code);
+-		$len = strlen($code);
++        $stringLength = strlen($code);
+ 
+-		for ($i = 0; $i < $len; ++$i) {
+-
+-			if (!isset($chr[$code[$i]])) {
+-				throw new \Mpdf\Barcode\BarcodeException(sprintf('Invalid character "%s" in CODABAR barcode value "%s"', $code[$i], $code));
+-			}
++        for ($i = 0; $i < $stringLength; ++$i) {
++            if (!isset(self::CHARACTER_MAP[$code[$i]])) {
++                throw new BarcodeException(
++                    sprintf(
++                        'Invalid character "%s" in CODABAR barcode value "%s"',
++                        $code[$i],
++                        $code
++                    )
++                );
++            }
+ 
+-			$seq = $chr[$code[$i]];
++            $seq = self::CHARACTER_MAP[$code[$i]];
+ 
+-			for ($j = 0; $j < 8; ++$j) {
+-				if (($j % 2) == 0) {
+-					$t = true; // bar
+-				} else {
+-					$t = false; // space
+-				}
+-				$x = $seq[$j];
+-				if ($x == 2) {
+-					$w = $printRatio;
+-				} else {
+-					$w = 1;
+-				}
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
+-				++$k;
+-			}
+-		}
++            for ($j = 0; $j < 8; ++$j) {
++                $t = ($j % 2) == 0; // true is bar, false is space
++                $width = $seq[$j] === 2 ? $printRatio : 1;
++                $barArray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $width, 'h' => 1, 'p' => 0];
++                $barArray[BarcodeInterface::MAX_W] += $width;
++                ++$k;
++            }
++        }
+ 
+-		$this->data = $bararray;
+-	}
+-
+-	public function getType()
+-	{
+-		return 'CODABAR';
+-	}
+-
++        $this->data = $barArray;
++    }
+ }
+Index: src/Barcode/Code11.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Code11.php b/src/Barcode/Code11.php
+--- a/src/Barcode/Code11.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Code11.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -17,11 +17,11 @@
+ 	{
+ 		$this->init($code, $printRatio);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -45,7 +45,7 @@
+ 			'S' => '112211'
+ 		];
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 
+ 		$k = 0;
+ 
+@@ -118,14 +118,14 @@
+ 				$x = $seq[$j];
+ 				$w = ($x == 2) ? $printRatio : 1;
+ 
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 
+ 				++$k;
+ 			}
+ 		}
+ 
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -133,7 +133,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'CODE11';
+ 	}
+Index: src/Barcode/Code128.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Code128.php b/src/Barcode/Code128.php
+--- a/src/Barcode/Code128.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Code128.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -20,11 +20,11 @@
+ 	{
+ 		$this->init($code, $type, $ean);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -266,7 +266,7 @@
+ 
+ 		// add start, check and stop codes
+ 		$code = chr($startid) . $code . chr($check) . chr(106) . chr(107);
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 		$k = 0;
+ 		$len = strlen($code);
+ 
+@@ -290,17 +290,17 @@
+ 					$t = false; // space
+ 				}
+ 				$w = $seq[$j];
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 				++$k;
+ 			}
+ 		}
+ 
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 		$this->data = $bararray;
+ 	}
+ 
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'CODE128';
+ 	}
+Index: src/Barcode/Code39.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Code39.php b/src/Barcode/Code39.php
+--- a/src/Barcode/Code39.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Code39.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -18,11 +18,11 @@
+ 	{
+ 		$this->init($code, $printRatio, $extended, $checksum);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -102,7 +102,7 @@
+ 		// add star$this->>datat and stop codes
+ 		$code = '*' . $code . '*';
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 		$k = 0;
+ 		$clen = strlen($code);
+ 		for ($i = 0; $i < $clen; ++$i) {
+@@ -124,16 +124,16 @@
+ 					$w = 1;
+ 				}
+ 
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 				++$k;
+ 			}
+-			$bararray['bcode'][$k] = ['t' => false, 'w' => 1, 'h' => 1, 'p' => 0];
+-			$bararray['maxw'] += 1;
++			$bararray[BarcodeInterface::BCODE][$k] = ['t' => false, 'w' => 1, 'h' => 1, 'p' => 0];
++			$bararray[BarcodeInterface::MAX_W] += 1;
+ 			++$k;
+ 		}
+ 
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -227,7 +227,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'CODE39';
+ 	}
+Index: src/Barcode/Code93.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Code93.php b/src/Barcode/Code93.php
+--- a/src/Barcode/Code93.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Code93.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -16,11 +16,11 @@
+ 	{
+ 		$this->init($code);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -130,7 +130,7 @@
+ 
+ 		// add start and stop codes
+ 		$code = '*' . $code_ext . '*';
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 		$k = 0;
+ 		$clen = strlen($code);
+ 
+@@ -147,14 +147,14 @@
+ 					$t = false; // space
+ 				}
+ 				$w = $chr[$char][$j];
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 				++$k;
+ 			}
+ 		}
+ 
+-		$bararray['bcode'][$k] = ['t' => true, 'w' => 1, 'h' => 1, 'p' => 0];
+-		$bararray['maxw'] += 1;
++		$bararray[BarcodeInterface::BCODE][$k] = ['t' => true, 'w' => 1, 'h' => 1, 'p' => 0];
++		$bararray[BarcodeInterface::MAX_W] += 1;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -218,7 +218,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'CODE93';
+ 	}
+Index: src/Barcode/EanExt.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/EanExt.php b/src/Barcode/EanExt.php
+--- a/src/Barcode/EanExt.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/EanExt.php	(revision 1fc3ba4d9c90c092363212592844b5c92bd1cf6b)
+@@ -23,11 +23,11 @@
+ 	{
+ 		$this->init($code, $length);
+ 
+-		$this->data['lightmL'] = $leftMargin; // LEFT light margin =  x X-dim (http://www.gs1uk.org)
+-		$this->data['lightmR'] = $rightMargin; // RIGHT light margin =  x X-dim (http://www.gs1uk.org)
+-		$this->data['nom-X'] = $xDim; // Nominal value for X-dim in mm (http://www.gs1uk.org)
+-		$this->data['nom-H'] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
+-		$this->data['sepM'] = $separatorMargin; // SEPARATION margin =  x X-dim (http://web.archive.org/web/19990501035133/http://www.uc-council.org/d36-d.htm)
++		$this->data[BarcodeInterface::LIGHT_ML] = $leftMargin; // LEFT light margin =  x X-dim (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::LIGHT_MR] = $rightMargin; // RIGHT light margin =  x X-dim (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::NOM_X] = $xDim; // Nominal value for X-dim in mm (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::NOM_H] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::SEP_M] = $separatorMargin; // SEPARATION margin =  x X-dim (http://web.archive.org/web/19990501035133/http://www.uc-council.org/d36-d.htm)
+ 	}
+ 
+ 	/**
+@@ -101,12 +101,12 @@
+ 			$seq .= $codes[$p[$i]][$code[$i]];
+ 		}
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 
+ 		$this->data = $this->binseqToArray($seq, $bararray);
+ 	}
+ 
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'EAN EXT';
+ 	}
+Index: src/Barcode/EanUpc.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/EanUpc.php b/src/Barcode/EanUpc.php
+--- a/src/Barcode/EanUpc.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/EanUpc.php	(revision b4122ca66596fb776a2114cc4be651024c5db405)
+@@ -23,10 +23,10 @@
+ 	{
+ 		$this->init($code, $length);
+ 
+-		$this->data['lightmL'] = $leftMargin; // LEFT light margin =  x X-dim (http://www.gs1uk.org)
+-		$this->data['lightmR'] = $rightMargin; // RIGHT light margin =  x X-dim (http://www.gs1uk.org)
+-		$this->data['nom-X'] = $xDim; // Nominal value for X-dim in mm (http://www.gs1uk.org)
+-		$this->data['nom-H'] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::LIGHT_ML] = $leftMargin; // LEFT light margin =  x X-dim (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::LIGHT_MR] = $rightMargin; // RIGHT light margin =  x X-dim (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::NOM_X] = $xDim; // Nominal value for X-dim in mm (http://www.gs1uk.org)
++		$this->data[BarcodeInterface::NOM_H] = $barHeight; // Nominal bar height in mm incl. numerals (http://www.gs1uk.org)
+ 	}
+ 
+ 	/**
+@@ -213,14 +213,14 @@
+ 		$seq = '101'; // left guard bar
+ 
+ 		if ($upce && isset($upceCode)) {
+-			$bararray = ['code' => $upceCode, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++			$bararray = [BarcodeInterface::CODE => $upceCode, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 			$p = $upceParities[$code[1]][$r];
+ 			for ($i = 0; $i < 6; ++$i) {
+ 				$seq .= $codes[$p[$i]][$upceCode[$i]];
+ 			}
+ 			$seq .= '010101'; // right guard bar
+ 		} else {
+-			$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++			$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 			$halfLen = ceil($length / 2);
+ 			if ($length == 8) {
+ 				for ($i = 0; $i < $halfLen; ++$i) {
+@@ -249,13 +249,13 @@
+ 				} else {
+ 					$t = false; // space
+ 				}
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 				++$k;
+ 				$w = 0;
+ 			}
+ 		}
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -263,7 +263,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'EANUPC';
+ 	}
+Index: src/Barcode/I25.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/I25.php b/src/Barcode/I25.php
+--- a/src/Barcode/I25.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/I25.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -20,11 +20,11 @@
+ 	{
+ 		$this->init($code, $printRatio, $checksum);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = $topBottomMargin; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = $topBottomMargin; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -62,7 +62,7 @@
+ 		// add start and stop codes
+ 		$code = 'AA' . strtolower($code) . 'ZA';
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
+ 		$k = 0;
+ 		$clen = strlen($code);
+ 		for ($i = 0; $i < $clen; $i = ($i + 2)) {
+@@ -92,12 +92,12 @@
+ 					$w = 1;
+ 				}
+ 
+-				$bararray['bcode'][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
+-				$bararray['maxw'] += $w;
++				$bararray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $w, 'h' => 1, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += $w;
+ 				++$k;
+ 			}
+ 		}
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -129,7 +129,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'I25';
+ 	}
+Index: src/Barcode/Imb.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Imb.php b/src/Barcode/Imb.php
+--- a/src/Barcode/Imb.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Imb.php	(revision 2a239bd397dd1a60ad3c9e794f350ff80e0cd191)
+@@ -48,14 +48,14 @@
+ 
+ 		$this->init($code, $gapWidth, $daft);
+ 
+-		$this->data['nom-X'] = $xDim;
+-		$this->data['nom-H'] = 3.68; // Nominal value for Height of Full bar in mm (spec.)
++		$this->data[BarcodeInterface::NOM_X] = $xDim;
++		$this->data[BarcodeInterface::NOM_H] = 3.68; // Nominal value for Height of Full bar in mm (spec.)
+ 
+ 		// USPS-B-3200 Revision C = 4.623
+ 		// USPS-B-3200 Revision E = 3.68
+-		$this->data['quietL'] = 3.175; // LEFT Quiet margin =  mm (spec.)
+-		$this->data['quietR'] = 3.175; // RIGHT Quiet margin =  mm (spec.)
+-		$this->data['quietTB'] = 0.711; // TOP/BOTTOM Quiet margin =  mm (spec.)
++		$this->data[BarcodeInterface::QUIET_L] = 3.175; // LEFT Quiet margin =  mm (spec.)
++		$this->data[BarcodeInterface::QUIET_R] = 3.175; // RIGHT Quiet margin =  mm (spec.)
++		$this->data[BarcodeInterface::QUIET_TB] = 0.711; // TOP/BOTTOM Quiet margin =  mm (spec.)
+ 	}
+ 
+ 	/**
+@@ -178,7 +178,7 @@
+ 
+ 		// build bars
+ 		$k = 0;
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => $daft['F'], 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => $daft['F'], BarcodeInterface::BCODE => []];
+ 		for ($i = 0; $i < 65; ++$i) {
+ 			$asc = (($characters[$asc_chr[$i]] & pow(2, $asc_pos[$i])) > 0);
+ 			$dsc = (($characters[$dsc_chr[$i]] & pow(2, $dsc_pos[$i])) > 0);
+@@ -199,14 +199,14 @@
+ 				$p = ($daft['F'] - $daft['T']) / 2;
+ 				$h = $daft['T'];
+ 			}
+-			$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
++			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
+ 			// Gap
+-			$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 1, 'p' => 0];
+-			$bararray['maxw'] += (1 + $gapWidth);
++			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 1, 'p' => 0];
++			$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
+ 		}
+ 
+-		unset($bararray['bcode'][($k - 1)]);
+-		$bararray['maxw'] -= $gapWidth;
++		unset($bararray[BarcodeInterface::BCODE][($k - 1)]);
++		$bararray[BarcodeInterface::MAX_W] -= $gapWidth;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -358,7 +358,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'IMB';
+ 	}
+Index: src/Barcode/Msi.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Msi.php b/src/Barcode/Msi.php
+--- a/src/Barcode/Msi.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Msi.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -17,11 +17,11 @@
+ 	{
+ 		$this->init($code, $checksum);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 12); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 12); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 12); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 12); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -81,8 +81,8 @@
+ 			$seq .= $chr[$digit];
+ 		}
+ 		$seq .= '1001'; // right guard
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $this->binseqToArray($seq, $bararray);
+ 	}
+@@ -90,7 +90,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'MSI';
+ 	}
+Index: src/Barcode/Postnet.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Postnet.php b/src/Barcode/Postnet.php
+--- a/src/Barcode/Postnet.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Postnet.php	(revision 2a239bd397dd1a60ad3c9e794f350ff80e0cd191)
+@@ -19,11 +19,11 @@
+ 	{
+ 		$this->init($code, $gapWidth, $planet);
+ 
+-		$this->data['nom-X'] = $xDim;
+-		$this->data['nom-H'] = 3.175; // Nominal value for Height of Full bar in mm (spec.)
+-		$this->data['quietL'] = 3.175; // LEFT Quiet margin =  mm (?spec.)
+-		$this->data['quietR'] = 3.175; // RIGHT Quiet margin =  mm (?spec.)
+-		$this->data['quietTB'] = 1.016; // TOP/BOTTOM Quiet margin =  mm (?spec.)
++		$this->data[BarcodeInterface::NOM_X] = $xDim;
++		$this->data[BarcodeInterface::NOM_H] = 3.175; // Nominal value for Height of Full bar in mm (spec.)
++		$this->data[BarcodeInterface::QUIET_L] = 3.175; // LEFT Quiet margin =  mm (?spec.)
++		$this->data[BarcodeInterface::QUIET_R] = 3.175; // RIGHT Quiet margin =  mm (?spec.)
++		$this->data[BarcodeInterface::QUIET_TB] = 1.016; // TOP/BOTTOM Quiet margin =  mm (?spec.)
+ 	}
+ 
+ 	/**
+@@ -62,7 +62,7 @@
+ 			];
+ 		}
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 5, 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 5, BarcodeInterface::BCODE => []];
+ 
+ 		$k = 0;
+ 		$code = str_replace('-', '', $code);
+@@ -85,9 +85,9 @@
+ 		$len = strlen($code);
+ 
+ 		// start bar
+-		$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
+-		$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 5, 'p' => 0];
+-		$bararray['maxw'] += (1 + $gapWidth);
++		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
++		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 5, 'p' => 0];
++		$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
+ 
+ 		for ($i = 0; $i < $len; ++$i) {
+ 			for ($j = 0; $j < 5; ++$j) {
+@@ -99,16 +99,16 @@
+ 					$h = 2;
+ 					$p = 3;
+ 				}
+-				$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
+-				$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
+-				$bararray['maxw'] += (1 + $gapWidth);
++				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
++				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
+ 			}
+ 		}
+ 
+ 		// end bar
+-		$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
+-		$bararray['maxw'] += 1;
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => 5, 'p' => 0];
++		$bararray[BarcodeInterface::MAX_W] += 1;
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $bararray;
+ 	}
+@@ -116,7 +116,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'POSTNET';
+ 	}
+Index: src/Barcode/Rm4Scc.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/Rm4Scc.php b/src/Barcode/Rm4Scc.php
+--- a/src/Barcode/Rm4Scc.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/Rm4Scc.php	(revision 2a239bd397dd1a60ad3c9e794f350ff80e0cd191)
+@@ -16,11 +16,11 @@
+ 	{
+ 		$this->init($code, $gapWidth, $daft, $kix);
+ 
+-		$this->data['nom-X'] = $xDim;
+-		$this->data['nom-H'] = 5.0; // Nominal value for Height of Full bar in mm (spec.)
+-		$this->data['quietL'] = 2; // LEFT Quiet margin =  mm (spec.)
+-		$this->data['quietR'] = 2; // RIGHT Quiet margin =  mm (spec.)
+-		$this->data['quietTB'] = 2; // TOP/BOTTOM Quiet margin =  mm (spec?)
++		$this->data[BarcodeInterface::NOM_X] = $xDim;
++		$this->data[BarcodeInterface::NOM_H] = 5.0; // Nominal value for Height of Full bar in mm (spec.)
++		$this->data[BarcodeInterface::QUIET_L] = 2; // LEFT Quiet margin =  mm (spec.)
++		$this->data[BarcodeInterface::QUIET_R] = 2; // RIGHT Quiet margin =  mm (spec.)
++		$this->data[BarcodeInterface::QUIET_TB] = 2; // TOP/BOTTOM Quiet margin =  mm (spec?)
+ 	}
+ 
+ 	/**
+@@ -81,7 +81,7 @@
+ 		$code = strtoupper($code);
+ 		$len = strlen($code);
+ 
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => $daft['F'], 'bcode' => []];
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => $daft['F'], BarcodeInterface::BCODE => []];
+ 
+ 		if ($notkix) {
+ 			// table for checksum calculation (row,col)
+@@ -133,16 +133,16 @@
+ 			$col %= 6;
+ 			$chk = array_keys($checktable, [$row, $col]);
+ 			$code .= $chk[0];
+-			$bararray['checkdigit'] = $chk[0];
++			$bararray[BarcodeInterface::CHECK_DIGIT] = $chk[0];
+ 			++$len;
+ 		}
+ 
+ 		$k = 0;
+ 		if ($notkix) {
+ 			// start bar
+-			$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['A'], 'p' => 0];
+-			$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => $daft['A'], 'p' => 0];
+-			$bararray['maxw'] += (1 + $gapWidth);
++			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['A'], 'p' => 0];
++			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => $daft['A'], 'p' => 0];
++			$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
+ 		}
+ 
+ 		for ($i = 0; $i < $len; ++$i) {
+@@ -172,17 +172,17 @@
+ 						break;
+ 				}
+ 
+-				$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
+-				$bararray['bcode'][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
+-				$bararray['maxw'] += (1 + $gapWidth);
++				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $h, 'p' => $p];
++				$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 0, 'w' => $gapWidth, 'h' => 2, 'p' => 0];
++				$bararray[BarcodeInterface::MAX_W] += (1 + $gapWidth);
+ 
+ 			}
+ 		}
+ 
+ 		if ($notkix) {
+ 			// stop bar
+-			$bararray['bcode'][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['F'], 'p' => 0];
+-			$bararray['maxw'] += 1;
++			$bararray[BarcodeInterface::BCODE][$k++] = ['t' => 1, 'w' => 1, 'h' => $daft['F'], 'p' => 0];
++			$bararray[BarcodeInterface::MAX_W] += 1;
+ 		}
+ 
+ 		$this->data = $bararray;
+@@ -191,7 +191,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'RM4SCC';
+ 	}
+Index: src/Barcode/S25.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/S25.php b/src/Barcode/S25.php
+--- a/src/Barcode/S25.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/src/Barcode/S25.php	(revision 0bb847c4fd5325a00ba2cb70f965c32feec11a9b)
+@@ -18,11 +18,11 @@
+ 	{
+ 		$this->init($code, $checksum);
+ 
+-		$this->data['nom-X'] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
+-		$this->data['nom-H'] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
+-		$this->data['lightmL'] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
+-		$this->data['lightmR'] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
+-		$this->data['lightTB'] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
++		$this->data[BarcodeInterface::NOM_X] = 0.381; // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
++		$this->data[BarcodeInterface::NOM_H] = 10;  // Nominal value for Height of Full bar in mm (non-spec.)
++		$this->data[BarcodeInterface::LIGHT_ML] = ($quiet_zone_left !== null ? $quiet_zone_left : 10); // LEFT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_MR] = ($quiet_zone_right !== null ? $quiet_zone_right : 10); // RIGHT light margin =  x X-dim (spec.)
++		$this->data[BarcodeInterface::LIGHT_TB] = 0; // TOP/BOTTOM light margin =  x X-dim (non-spec.)
+ 	}
+ 
+ 	/**
+@@ -69,8 +69,8 @@
+ 		}
+ 
+ 		$seq .= '1101011';
+-		$bararray = ['code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => []];
+-		$bararray['checkdigit'] = $checkdigit;
++		$bararray = [BarcodeInterface::CODE => $code, BarcodeInterface::MAX_W => 0, BarcodeInterface::MAX_H => 1, BarcodeInterface::BCODE => []];
++		$bararray[BarcodeInterface::CHECK_DIGIT] = $checkdigit;
+ 
+ 		$this->data = $this->binseqToArray($seq, $bararray);
+ 	}
+@@ -103,7 +103,7 @@
+ 	/**
+ 	 * @inheritdoc
+ 	 */
+-	public function getType()
++	public function getType(): string
+ 	{
+ 		return 'S25';
+ 	}
+Index: tests/Mpdf/Barcode/Code128Test.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Mpdf/Barcode/Code128Test.php b/tests/Mpdf/Barcode/Code128Test.php
+--- a/tests/Mpdf/Barcode/Code128Test.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/tests/Mpdf/Barcode/Code128Test.php	(revision 8cc3900089a5e7d7d4cc2e4fb52a2a7bcdc28b6c)
+@@ -12,8 +12,8 @@
+ 		$barcode = new Code128('103 33 99   12  ', 'RAW');
+ 		$array = $barcode->getData();
+ 		$this->assertInternalType('array', $array);
+-		$this->assertArrayHasKey('bcode', $array);
+-		$this->assertInternalType('array', $array['bcode']);
++		$this->assertArrayHasKey(BarcodeInterface::BCODE, $array);
++		$this->assertInternalType('array', $array[BarcodeInterface::BCODE]);
+ 	}
+ 
+ 	public function invalidCodeProvider()
+Index: tests/Mpdf/Barcode/EanUpcTest.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Mpdf/Barcode/EanUpcTest.php b/tests/Mpdf/Barcode/EanUpcTest.php
+--- a/tests/Mpdf/Barcode/EanUpcTest.php	(revision fd52cccf08befb2858dec77509308c25d17655ff)
++++ b/tests/Mpdf/Barcode/EanUpcTest.php	(revision 8cc3900089a5e7d7d4cc2e4fb52a2a7bcdc28b6c)
+@@ -13,8 +13,8 @@
+ 		$barcode = new EanUpc('9783161484100', 13, 11, 7, 0.33, 25.93);
+ 		$array = $barcode->getData();
+ 		$this->assertInternalType('array', $array);
+-		$this->assertArrayHasKey('bcode', $array);
+-		$this->assertInternalType('array', $array['bcode']);
++		$this->assertArrayHasKey(BarcodeInterface::BCODE, $array);
++		$this->assertInternalType('array', $array[BarcodeInterface::BCODE]);
+ 	}
+ 
+ 	public function invalidCodeProvider()
+Index: src/Mpdf.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Mpdf.php b/src/Mpdf.php
+--- a/src/Mpdf.php	(revision ac08bc80b5619ece8bf27a7f30f5f095e5374683)
++++ b/src/Mpdf.php	(revision 1fc3ba4d9c90c092363212592844b5c92bd1cf6b)
+@@ -2,6 +2,7 @@
+ 
+ namespace Mpdf;
+ 
++use Mpdf\Barcode\BarcodeInterface;
+ use Mpdf\Config\ConfigVariables;
+ use Mpdf\Config\FontVariables;
+ use Mpdf\Conversion;
+@@ -1033,7 +1034,7 @@
+ 	{
+ 		$this->_dochecks();
+ 
+-		list(
++		[
+ 			$mode,
+ 			$format,
+ 			$default_font_size,
+@@ -1045,7 +1046,7 @@
+ 			$mgh,
+ 			$mgf,
+ 			$orientation
+-		) = $this->initConstructorParams($config);
++		] = $this->initConstructorParams($config);
+ 
+ 		$this->logger = new NullLogger();
+ 
+@@ -1382,7 +1383,7 @@
+ 
+ 		// Autodetect if mode is a language_country string (en-GB or en_GB or en)
+ 		if ($mode && $mode != 'UTF-8') { // mPDF 6
+-			list ($coreSuitable, $mpdf_pdf_unifont) = $this->languageToFont->getLanguageOptions($mode, $this->useAdobeCJK);
++			[$coreSuitable, $mpdf_pdf_unifont] = $this->languageToFont->getLanguageOptions($mode, $this->useAdobeCJK);
+ 			if ($coreSuitable && $optcore) {
+ 				$onlyCoreFonts = true;
+ 			}
+@@ -2281,7 +2282,7 @@
+ 			} elseif ($this->bodyBackgroundImage['image_id']) { // Background pattern
+ 				$n = count($this->patterns) + 1;
+ 				// If using resize, uses TrimBox (not including the bleed)
+-				list($orig_w, $orig_h, $x_repeat, $y_repeat) = $this->_resizeBackgroundImage($this->bodyBackgroundImage['orig_w'], $this->bodyBackgroundImage['orig_h'], $clw, $clh, $this->bodyBackgroundImage['resize'], $this->bodyBackgroundImage['x_repeat'], $this->bodyBackgroundImage['y_repeat']);
++				[$orig_w, $orig_h, $x_repeat, $y_repeat] = $this->_resizeBackgroundImage($this->bodyBackgroundImage['orig_w'], $this->bodyBackgroundImage['orig_h'], $clw, $clh, $this->bodyBackgroundImage['resize'], $this->bodyBackgroundImage['x_repeat'], $this->bodyBackgroundImage['y_repeat']);
+ 
+ 				$this->patterns[$n] = ['x' => $clx, 'y' => $cly, 'w' => $clw, 'h' => $clh, 'pgh' => $this->h, 'image_id' => $this->bodyBackgroundImage['image_id'], 'orig_w' => $orig_w, 'orig_h' => $orig_h, 'x_pos' => $this->bodyBackgroundImage['x_pos'], 'y_pos' => $this->bodyBackgroundImage['y_pos'], 'x_repeat' => $x_repeat, 'y_repeat' => $y_repeat, 'itype' => $this->bodyBackgroundImage['itype']];
+ 				if (($this->bodyBackgroundImage['opacity'] > 0 || $this->bodyBackgroundImage['opacity'] === '0') && $this->bodyBackgroundImage['opacity'] < 1) {
+@@ -2409,7 +2410,7 @@
+ 					$pb['h'] += $adjustmenty;
+ 					$n = count($this->patterns) + 1;
+ 
+-					list($orig_w, $orig_h, $x_repeat, $y_repeat) = $this->_resizeBackgroundImage($pb['orig_w'], $pb['orig_h'], $pb['w'], $pb['h'], $pb['resize'], $pb['x_repeat'], $pb['y_repeat'], $pb['bpa'], $pb['size']);
++					[$orig_w, $orig_h, $x_repeat, $y_repeat] = $this->_resizeBackgroundImage($pb['orig_w'], $pb['orig_h'], $pb['w'], $pb['h'], $pb['resize'], $pb['x_repeat'], $pb['y_repeat'], $pb['bpa'], $pb['size']);
+ 
+ 					$this->patterns[$n] = ['x' => $pb['x'], 'y' => $pb['y'], 'w' => $pb['w'], 'h' => $pb['h'], 'pgh' => $this->h, 'image_id' => $pb['image_id'], 'orig_w' => $orig_w, 'orig_h' => $orig_h, 'x_pos' => $pb['x_pos'], 'y_pos' => $pb['y_pos'], 'x_repeat' => $x_repeat, 'y_repeat' => $y_repeat, 'itype' => $pb['itype'], 'bpa' => $pb['bpa']];
+ 
+@@ -2604,7 +2605,7 @@
+ 					$pb['y'] -= $adjustmenty;
+ 					$pb['h'] += $adjustmenty;
+ 					$n = count($this->patterns) + 1;
+-					list($orig_w, $orig_h, $x_repeat, $y_repeat) = $this->_resizeBackgroundImage($pb['orig_w'], $pb['orig_h'], $pb['w'], $pb['h'], $pb['resize'], $pb['x_repeat'], $pb['y_repeat']);
++					[$orig_w, $orig_h, $x_repeat, $y_repeat] = $this->_resizeBackgroundImage($pb['orig_w'], $pb['orig_h'], $pb['w'], $pb['h'], $pb['resize'], $pb['x_repeat'], $pb['y_repeat']);
+ 					$this->patterns[$n] = ['x' => $pb['x'], 'y' => $pb['y'], 'w' => $pb['w'], 'h' => $pb['h'], 'pgh' => $this->h, 'image_id' => $pb['image_id'], 'orig_w' => $orig_w, 'orig_h' => $orig_h, 'x_pos' => $pb['x_pos'], 'y_pos' => $pb['y_pos'], 'x_repeat' => $x_repeat, 'y_repeat' => $y_repeat, 'itype' => $pb['itype']];
+ 					$x = $pb['x'] * Mpdf::SCALE;
+ 					$y = ($this->h - $pb['y']) * Mpdf::SCALE;
+@@ -3334,7 +3335,7 @@
+ 			throw new \Mpdf\MpdfException("Cannot load spot colors file - " . $file);
+ 		}
+ 		foreach ($colors as $sc) {
+-			list($name, $c, $m, $y, $k) = preg_split("/\t/", $sc);
++			[$name, $c, $m, $y, $k] = preg_split("/\t/", $sc);
+ 			$c = intval($c);
+ 			$m = intval($m);
+ 			$y = intval($y);
+@@ -6052,7 +6053,7 @@
+ 								}
+ 							}
+ 
+-							list($charspacing, $ws, $kashida) = $this->GetJspacing($nb_carac, $nb_spaces, ((($wmax) - $len_ligne) * Mpdf::SCALE), $inclCursive, $tmpOTLdata);
++							[$charspacing, $ws, $kashida] = $this->GetJspacing($nb_carac, $nb_spaces, ((($wmax) - $len_ligne) * Mpdf::SCALE), $inclCursive, $tmpOTLdata);
+ 							$this->SetSpacing($charspacing, $ws);
+ 						}
+ 
+@@ -6158,7 +6159,7 @@
+ 							$nb_spaces = substr_count($tmp, ' ');
+ 							$tmpOTLdata = [];
+ 
+-							list($charspacing, $ws, $kashida) = $this->GetJspacing($nb_carac, $nb_spaces, ((($wmax) - $len_ligne) * Mpdf::SCALE), false, $tmpOTLdata);
++							[$charspacing, $ws, $kashida] = $this->GetJspacing($nb_carac, $nb_spaces, ((($wmax) - $len_ligne) * Mpdf::SCALE), false, $tmpOTLdata);
+ 							$this->SetSpacing($charspacing, $ws);
+ 						}
+ 
+@@ -6506,7 +6507,7 @@
+ 			$fpaddingL = 0;
+ 			/* -- CSS-FLOAT -- */
+ 			if (count($this->floatDivs)) {
+-				list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($this->blklvl);
++				[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($this->blklvl);
+ 				if ($r_exists) {
+ 					$fpaddingR = $r_width;
+ 				}
+@@ -6707,7 +6708,7 @@
+ 		$fpaddingL = 0;
+ 		/* -- CSS-FLOAT -- */
+ 		if (count($this->floatDivs)) {
+-			list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($this->blklvl);
++			[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($this->blklvl);
+ 			if ($r_exists) {
+ 				$fpaddingR = $r_width;
+ 			}
+@@ -6822,7 +6823,7 @@
+ 			if ((((($contentWidth + $lastitalic) > $maxWidth) && ($content[(count($chunkorder) - 1)] != ' ') ) ||
+ 				(!$endofblock && $align == 'J' && ($next == 'image' || $next == 'select' || $next == 'input' || $next == 'textarea' || ($next == 'br' && $this->justifyB4br)))) && !($CJKoverflow && $this->allowCJKoverflow)) {
+ 				// WORD SPACING
+-				list($jcharspacing, $jws, $jkashida) = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
++				[$jcharspacing, $jws, $jkashida] = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
+ 			} /* -- CJK-FONTS -- */ elseif ($this->checkCJK && $align == 'J' && $CJKoverflow && $this->allowCJKoverflow && $this->CJKforceend) {
+ 				// force-end overhang
+ 				$hanger = mb_substr($content[(count($chunkorder) - 1)], mb_strlen($content[(count($chunkorder) - 1)], $this->mb_enc) - 1, 1, $this->mb_enc);
+@@ -6831,7 +6832,7 @@
+ 					$this->restoreFont($font[$chunkorder[count($chunkorder) - 1]], false);
+ 					$contentWidth -= $this->GetStringWidth($hanger) * Mpdf::SCALE;
+ 					$nb_carac -= 1;
+-					list($jcharspacing, $jws, $jkashida) = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
++					[$jcharspacing, $jws, $jkashida] = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
+ 				}
+ 			} /* -- END CJK-FONTS -- */
+ 
+@@ -7806,7 +7807,7 @@
+ 			$fpaddingL = 0;
+ 			/* -- CSS-FLOAT -- */
+ 			if (count($this->floatDivs)) {
+-				list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($this->blklvl);
++				[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($this->blklvl);
+ 				if ($r_exists) {
+ 					$fpaddingR = $r_width;
+ 				}
+@@ -7945,7 +7946,7 @@
+ 			$fpaddingL = 0;
+ 			/* -- CSS-FLOAT -- */
+ 			if (count($this->floatDivs)) {
+-				list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($this->blklvl);
++				[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($this->blklvl);
+ 				if ($r_exists) {
+ 					$fpaddingR = $r_width;
+ 				}
+@@ -8412,7 +8413,7 @@
+ 							} // mPDF 6 allow spacing for inline object
+ 						}
+ 						// GetJSpacing adds kashida spacing to GPOSinfo if appropriate for Font
+-						list($jcharspacing, $jws, $jkashida) = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
++						[$jcharspacing, $jws, $jkashida] = $this->GetJspacing($nb_carac, $nb_spaces, ($maxWidth - $lastitalic - $contentWidth - $WidthCorrection - (($this->cMarginL + $this->cMarginR) * Mpdf::SCALE) - ($paddingL + $paddingR + (($fpaddingL + $fpaddingR) * Mpdf::SCALE) )), $inclCursive, $cOTLdata);
+ 					}
+ 
+ 					// WORD SPACING
+@@ -10115,7 +10116,7 @@
+ 				$psel = '';
+ 			}
+ 
+-			list($orientation, $mgl, $mgr, $mgt, $mgb, $mgh, $mgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat) = $this->SetPagedMediaCSS($psel, $first, $oddEven);
++			[$orientation, $mgl, $mgr, $mgt, $mgb, $mgh, $mgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat] = $this->SetPagedMediaCSS($psel, $first, $oddEven);
+ 
+ 			if ($this->mirrorMargins && ($this->page % 2 == 0)) {
+ 
+@@ -12007,7 +12008,7 @@
+ 								$ph = $h;
+ 							}
+ 							if ($this->ColActive) {
+-								list($orig_w, $orig_h, $x_repeat, $y_repeat) = $this->_resizeBackgroundImage($tablehf['background-image']['orig_w'], $tablehf['background-image']['orig_h'], $pw, $ph, $tablehf['background-image']['resize'], $tablehf['background-image']['x_repeat'], $tablehf['background-image']['y_repeat']);
++								[$orig_w, $orig_h, $x_repeat, $y_repeat] = $this->_resizeBackgroundImage($tablehf['background-image']['orig_w'], $tablehf['background-image']['orig_h'], $pw, $ph, $tablehf['background-image']['resize'], $tablehf['background-image']['x_repeat'], $tablehf['background-image']['y_repeat']);
+ 								$this->patterns[$n] = ['x' => $px, 'y' => $py, 'w' => $pw, 'h' => $ph, 'pgh' => $this->h, 'image_id' => $tablehf['background-image']['image_id'], 'orig_w' => $orig_w, 'orig_h' => $orig_h, 'x_pos' => $tablehf['background-image']['x_pos'], 'y_pos' => $tablehf['background-image']['y_pos'], 'x_repeat' => $x_repeat, 'y_repeat' => $y_repeat, 'itype' => $tablehf['background-image']['itype']];
+ 								if ($tablehf['background-image']['opacity'] > 0 && $tablehf['background-image']['opacity'] < 1) {
+ 									$opac = $this->SetAlpha($tablehf['background-image']['opacity'], 'Normal', true);
+@@ -12530,7 +12531,7 @@
+ 		$cContent = (isset($arr['C']['content']) ? $arr['C']['content'] : '');
+ 		$rContent = (isset($arr['R']['content']) ? $arr['R']['content'] : '');
+ 
+-		list($lw, $cw, $rw) = $this->_shareHeaderFooterWidth($lContent, $cContent, $rContent);
++		[$lw, $cw, $rw] = $this->_shareHeaderFooterWidth($lContent, $cContent, $rContent);
+ 
+ 		if ($hf == 'H') {
+ 			$valign = 'bottom';
+@@ -12723,7 +12724,7 @@
+ 
+ 				$hdet = explode('|', $Harray);
+ 
+-				list($lw, $cw, $rw) = $this->_shareHeaderFooterWidth($hdet[0], $hdet[1], $hdet[2]);
++				[$lw, $cw, $rw] = $this->_shareHeaderFooterWidth($hdet[0], $hdet[1], $hdet[2]);
+ 				$oddhtml = '<table width="100%" style="border-collapse: collapse; margin: 0; vertical-align: bottom; color: #000000; ';
+ 
+ 				if ($this->defaultheaderfontsize) {
+@@ -13271,7 +13272,7 @@
+ 		if ($this->state == 0 && ((isset($this->cssManager->CSS['@PAGE']) && $this->cssManager->CSS['@PAGE']) || (isset($this->cssManager->CSS['@PAGE>>PSEUDO>>FIRST']) && $this->cssManager->CSS['@PAGE>>PSEUDO>>FIRST']))) { // mPDF 5.7.3
+ 			$this->page_box['current'] = '';
+ 			$this->page_box['using'] = true;
+-			list($pborientation, $pbmgl, $pbmgr, $pbmgt, $pbmgb, $pbmgh, $pbmgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat) = $this->SetPagedMediaCSS('', false, 'O');
++			[$pborientation, $pbmgl, $pbmgr, $pbmgt, $pbmgb, $pbmgh, $pbmgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat] = $this->SetPagedMediaCSS('', false, 'O');
+ 			$this->DefOrientation = $this->CurOrientation = $pborientation;
+ 			$this->orig_lMargin = $this->DeflMargin = $pbmgl;
+ 			$this->orig_rMargin = $this->DefrMargin = $pbmgr;
+@@ -13279,7 +13280,7 @@
+ 			$this->orig_bMargin = $this->bMargin = $pbmgb;
+ 			$this->orig_hMargin = $this->margin_header = $pbmgh;
+ 			$this->orig_fMargin = $this->margin_footer = $pbmgf;
+-			list($pborientation, $pbmgl, $pbmgr, $pbmgt, $pbmgb, $pbmgh, $pbmgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat) = $this->SetPagedMediaCSS('', true, 'O'); // first page
++			[$pborientation, $pbmgl, $pbmgr, $pbmgt, $pbmgb, $pbmgh, $pbmgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat] = $this->SetPagedMediaCSS('', true, 'O'); // first page
+ 			$this->show_marks = $marks;
+ 			if ($hname) {
+ 				$this->firstPageBoxHeader = $hname;
+@@ -15268,7 +15269,7 @@
+ 	// Added mPDF 3.0 Float DIV - CLEAR
+ 	function ClearFloats($clear, $blklvl = 0)
+ 	{
+-		list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($blklvl, true);
++		[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($blklvl, true);
+ 		$end = $currpos = ($this->page * 1000 + $this->y);
+ 		if ($clear == 'BOTH' && ($l_exists || $r_exists)) {
+ 			$this->pageoutput[$this->page] = [];
+@@ -15881,7 +15882,7 @@
+ 		$paint_ht_corr = 0;
+ 		/* -- CSS-FLOAT -- */
+ 		if (count($this->floatDivs)) {
+-			list($l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width) = $this->GetFloatDivInfo($this->blklvl);
++			[$l_exists, $r_exists, $l_max, $r_max, $l_width, $r_width] = $this->GetFloatDivInfo($this->blklvl);
+ 			if (($this->blk[$this->blklvl]['inner_width'] - $l_width - $r_width) < (2 * $this->GetCharWidth('W', false))) {
+ 				// Too narrow to fit - try to move down past L or R float
+ 				if ($l_max < $r_max && ($this->blk[$this->blklvl]['inner_width'] - $r_width) > (2 * $this->GetCharWidth('W', false))) {
+@@ -16152,11 +16153,11 @@
+ 							$save_buffer = $this->cellBorderBuffer;
+ 							$this->cellBorderBuffer = [];
+ 							$ncx = $this->x;
+-							list($dummyx, $w) = $this->_tableGetWidth($table, $objattr['row'], $objattr['col']);
++							[$dummyx, $w] = $this->_tableGetWidth($table, $objattr['row'], $objattr['col']);
+ 							$ntw = $this->table[($level + 1)][$objattr['nestedcontent']]['w']; // nested table width
+ 							if (!$this->simpleTables) {
+ 								if ($this->packTableData) {
+-									list($bt, $br, $bb, $bl) = $this->_getBorderWidths($cell['borderbin']);
++									[$bt, $br, $bb, $bl] = $this->_getBorderWidths($cell['borderbin']);
+ 								} else {
+ 									$br = $cell['border_details']['R']['w'];
+ 									$bl = $cell['border_details']['L']['w'];
+@@ -16207,7 +16208,7 @@
+ 					}
+ 					/* -- END CSS-IMAGE-FLOAT -- */
+ 
+-					list($skipln) = $this->inlineObject($objattr['type'], '', $this->y, $objattr, $this->lMargin, ($this->flowingBlockAttr['contentWidth'] / Mpdf::SCALE), $maxWidth, $this->flowingBlockAttr['height'], false, $is_table);
++					[$skipln] = $this->inlineObject($objattr['type'], '', $this->y, $objattr, $this->lMargin, ($this->flowingBlockAttr['contentWidth'] / Mpdf::SCALE), $maxWidth, $this->flowingBlockAttr['height'], false, $is_table);
+ 					//  1 -> New line needed because of width
+ 					// -1 -> Will fit width on line but NEW PAGE REQUIRED because of height
+ 					// -2 -> Will not fit on line therefore needs new line but thus NEW PAGE REQUIRED
+@@ -18147,7 +18148,7 @@
+ 		if (isset($arrayaux['LANG']) && $arrayaux['LANG']) {
+ 			if ($this->autoLangToFont && !$this->usingCoreFont) {
+ 				if ($arrayaux['LANG'] != $this->default_lang && $arrayaux['LANG'] != 'UTF-8') {
+-					list ($coreSuitable, $mpdf_pdf_unifont) = $this->languageToFont->getLanguageOptions($arrayaux['LANG'], $this->useAdobeCJK);
++					[$coreSuitable, $mpdf_pdf_unifont] = $this->languageToFont->getLanguageOptions($arrayaux['LANG'], $this->useAdobeCJK);
+ 					if ($mpdf_pdf_unifont) {
+ 						$arrayaux['FONT-FAMILY'] = $mpdf_pdf_unifont;
+ 					}
+@@ -19551,7 +19552,7 @@
+ 						}
+ 					} else {
+ 						if ($this->packTableData) {
+-							list($bt, $br, $bb, $bl) = $this->_getBorderWidths($c['borderbin']);
++							[$bt, $br, $bb, $bl] = $this->_getBorderWidths($c['borderbin']);
+ 						} else {
+ 							$br = $c['border_details']['R']['w'];
+ 							$bl = $c['border_details']['L']['w'];
+@@ -19743,7 +19744,7 @@
+ 		// COLUMN SPANS
+ 		$wc = &$table['wc'];
+ 		foreach ($listspan as $span) {
+-			list($i, $j) = $span;
++			[$i, $j] = $span;
+ 			$c = &$cs[$i][$j];
+ 			$lc = $j + $c['colspan'];
+ 			if ($lc > $nc) {
+@@ -20352,7 +20353,7 @@
+ 						}
+ 					} else {
+ 						if ($this->packTableData) {
+-							list($bt, $br, $bb, $bl) = $this->_getBorderWidths($c['borderbin']);
++							[$bt, $br, $bb, $bl] = $this->_getBorderWidths($c['borderbin']);
+ 						} else {
+ 							$bt = $c['border_details']['T']['w'];
+ 							$bb = $c['border_details']['B']['w'];
+@@ -20369,9 +20370,9 @@
+ 					}
+ 
+ 					if ($table['overflow'] == 'visible' && $level == 1) {
+-						list($x, $cw) = $this->_splitTableGetWidth($table, $i, $j);
++						[$x, $cw] = $this->_splitTableGetWidth($table, $i, $j);
+ 					} else {
+-						list($x, $cw) = $this->_tableGetWidth($table, $i, $j);
++						[$x, $cw] = $this->_tableGetWidth($table, $i, $j);
+ 					}
+ 
+ 
+@@ -20458,7 +20459,7 @@
+ 
+ 		$heightrow = &$table['hr'];
+ 		foreach ($listspan as $span) {
+-			list($i, $j) = $span;
++			[$i, $j] = $span;
+ 			$c = &$cells[$i][$j];
+ 			$lr = $i + $c['rowspan'];
+ 			if ($lr > $numrows) {
+@@ -20494,7 +20495,7 @@
+ 			} else {
+ 				if (!$this->simpleTables) {
+ 					if ($this->packTableData) {
+-						list($bt, $br, $bb, $bl) = $this->_getBorderWidths($c['borderbin']);
++						[$bt, $br, $bb, $bl] = $this->_getBorderWidths($c['borderbin']);
+ 					} else {
+ 						$bb = $c['border_details']['B']['w'];
+ 					}
+@@ -20543,7 +20544,7 @@
+ 				// Get row extent to analyse above and below
+ 				$top = $i;
+ 				foreach ($listspan as $checkspan) {
+-					list($cki, $ckj) = $checkspan;
++					[$cki, $ckj] = $checkspan;
+ 					$c = &$cells[$cki][$ckj];
+ 					if (isset($c['rowspan']) && $c['rowspan'] > 1) {
+ 						if (($cki + $c['rowspan'] - 1) >= $i) {
+@@ -21992,14 +21993,14 @@
+ 							if ($table['colPg'][$j] != $splitpg) {
+ 								continue;
+ 							}
+-							list($x, $w) = $this->_splitTableGetWidth($table, $i, $j);
++							[$x, $w] = $this->_splitTableGetWidth($table, $i, $j);
+ 							$js = $j - $startcol;
+ 						} else {
+-							list($x, $w) = $this->_tableGetWidth($table, $i, $j);
++							[$x, $w] = $this->_tableGetWidth($table, $i, $j);
+ 							$js = $j;
+ 						}
+ 
+-						list($y, $h) = $this->_tableGetHeight($table, $i, $j);
++						[$y, $h] = $this->_tableGetHeight($table, $i, $j);
+ 						$x += $x0;
+ 						$y += $y0;
+ 						// Get info of tfoot ==>> table footer
+@@ -22098,12 +22099,12 @@
+ 					$cell = &$cells[$i][$j];
+ 					if ($split) {
+ 						$lastCol = $j + (isset($cell['colspan']) ? ($cell['colspan'] - 1) : 0);
+-						list($x, $w) = $this->_splitTableGetWidth($table, $i, $j);
++						[$x, $w] = $this->_splitTableGetWidth($table, $i, $j);
+ 					} else {
+-						list($x, $w) = $this->_tableGetWidth($table, $i, $j);
++						[$x, $w] = $this->_tableGetWidth($table, $i, $j);
+ 					}
+ 
+-					list($y, $h) = $this->_tableGetHeight($table, $i, $j);
++					[$y, $h] = $this->_tableGetHeight($table, $i, $j);
+ 					$x += $x0;
+ 					$y += $y0;
+ 					$y -= $returny;
+@@ -22173,7 +22174,7 @@
+ 												for ($ctj = 0; $ctj < $numcols; $ctj++) {
+ 													if (isset($cells[$brow][$ctj]) && $cells[$brow][$ctj]) {
+ 														if ($this->packTableData) {
+-															list($bt, $br, $bb, $bl) = $this->_getBorderWidths($cells[$brow][$ctj]['borderbin']);
++															[$bt, $br, $bb, $bl] = $this->_getBorderWidths($cells[$brow][$ctj]['borderbin']);
+ 														} else {
+ 															$bb = $cells[$brow][$ctj]['border_details']['B']['w'];
+ 														}
+@@ -22188,7 +22189,7 @@
+ 												for ($ctj = 0; $ctj < $numcols; $ctj++) {
+ 													if (isset($cells[$trow][$ctj]) && $cells[$trow][$ctj]) {
+ 														if ($this->packTableData) {
+-															list($bt, $br, $bb, $bl) = $this->_getBorderWidths($cells[$trow][$ctj]['borderbin']);
++															[$bt, $br, $bb, $bl] = $this->_getBorderWidths($cells[$trow][$ctj]['borderbin']);
+ 														} else {
+ 															$bt = $cells[$trow][$ctj]['border_details']['T']['w'];
+ 														}
+@@ -22392,7 +22393,7 @@
+ 											if (isset($cells[$i][$ctj]) && $cells[$i][$ctj]) {
+ 												if (!$this->simpleTables) {
+ 													if ($this->packTableData) {
+-														list($bt, $br, $bb, $bl) = $this->_getBorderWidths($cells[$i][$ctj]['borderbin']);
++														[$bt, $br, $bb, $bl] = $this->_getBorderWidths($cells[$i][$ctj]['borderbin']);
+ 													} else {
+ 														$bt = $cells[$i][$ctj]['border_details']['T']['w'];
+ 													}
+@@ -22694,7 +22695,7 @@
+ 								$ph = $h;
+ 							}
+ 							if ($this->ColActive) {
+-								list($orig_w, $orig_h, $x_repeat, $y_repeat) = $this->_resizeBackgroundImage($cell['background-image']['orig_w'], $cell['background-image']['orig_h'], $pw, $ph, $cell['background-image']['resize'], $cell['background-image']['x_repeat'], $cell['background-image']['y_repeat']);
++								[$orig_w, $orig_h, $x_repeat, $y_repeat] = $this->_resizeBackgroundImage($cell['background-image']['orig_w'], $cell['background-image']['orig_h'], $pw, $ph, $cell['background-image']['resize'], $cell['background-image']['x_repeat'], $cell['background-image']['y_repeat']);
+ 								$this->patterns[$n] = ['x' => $px, 'y' => $py, 'w' => $pw, 'h' => $ph, 'pgh' => $this->h, 'image_id' => $cell['background-image']['image_id'], 'orig_w' => $orig_w, 'orig_h' => $orig_h, 'x_pos' => $cell['background-image']['x_pos'], 'y_pos' => $cell['background-image']['y_pos'], 'x_repeat' => $x_repeat, 'y_repeat' => $y_repeat];
+ 								if ($cell['background-image']['opacity'] > 0 && $cell['background-image']['opacity'] < 1) {
+ 									$opac = $this->SetAlpha($cell['background-image']['opacity'], 'Normal', true);
+@@ -23534,13 +23535,13 @@
+ 			}
+ 
+ 			if (!$tp_present) {
+-				list($tp_type, $tp_suppress, $tp_reset) = $this->docPageSettings($target_page);
++				[$tp_type, $tp_suppress, $tp_reset] = $this->docPageSettings($target_page);
+ 			}
+ 			if (!$sp_present) {
+-				list($sp_type, $sp_suppress, $sp_reset) = $this->docPageSettings($start_page);
++				[$sp_type, $sp_suppress, $sp_reset] = $this->docPageSettings($start_page);
+ 			}
+ 			if (!$ep_present) {
+-				list($ep_type, $ep_suppress, $ep_reset) = $this->docPageSettings($start_page - 1);
++				[$ep_type, $ep_suppress, $ep_reset] = $this->docPageSettings($start_page - 1);
+ 			}
+ 		}
+ 
+@@ -24105,7 +24106,7 @@
+ 							if ($this->indexUseSubentries) {
+ 								// If the Main entry does not have any page numbers associated with it
+ 								// create and insert an entry
+-								list($txtmain, $sub) = preg_split('/[:]/', $e, 2);
++								[$txtmain, $sub] = preg_split('/[:]/', $e, 2);
+ 								if (strip_tags($txt . $txtmain) != $mainentry) {
+ 									$html .= '<div class="mpdf_index_entry">' . $txt . $txtmain . '</div>';
+ 									$mainentry = strip_tags($txt . $txtmain);
+@@ -25450,7 +25451,7 @@
+ 			$useGPOS = isset($this->CurrentFont['useOTL']) && ($this->CurrentFont['useOTL'] & 0x80);
+ 
+ 			// NB Returned $chunk may be a shorter string (with adjusted $cOTLdata) by removal of LRE, RLE etc embedding codes.
+-			list($chunk, $rtl_content) = $this->otl->bidiSort($unicode, $chunk, $dir, $chunkOTLdata, $useGPOS);
++			[$chunk, $rtl_content] = $this->otl->bidiSort($unicode, $chunk, $dir, $chunkOTLdata, $useGPOS);
+ 
+ 			return $rtl_content;
+ 		}
+@@ -26112,12 +26113,12 @@
+ 				|| ($btype == 'UPCE' && strlen($code) === 11)
+ 				|| ($btype == 'EAN8' && strlen($code) === 7)) {
+ 
+-			$code .= $arrcode['checkdigit'];
++			$code .= $arrcode[BarcodeInterface::CHECK_DIGIT];
+ 
+ 			if (stristr($codestr, '-')) {
+-				$codestr .= '-' . $arrcode['checkdigit'];
++				$codestr .= '-' . $arrcode[BarcodeInterface::CHECK_DIGIT];
+ 			} else {
+-				$codestr .= $arrcode['checkdigit'];
++				$codestr .= $arrcode[BarcodeInterface::CHECK_DIGIT];
+ 			}
+ 		}
+ 
+@@ -26147,11 +26148,11 @@
+ 
+ 		$size /= $k; // in case resized in a table
+ 
+-		$xres = $arrcode['nom-X'] * $size;
+-		$llm = $arrcode['lightmL'] * $arrcode['nom-X'] * $size; // Left Light margin
+-		$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
++		$xres = $arrcode[BarcodeInterface::NOM_X] * $size;
++		$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $arrcode[BarcodeInterface::NOM_X] * $size; // Left Light margin
++		$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode[BarcodeInterface::NOM_X] * $size; // Right Light margin
+ 
+-		$bcw = ($arrcode["maxw"] * $xres); // Barcode width = Should always be 31.35mm * $size
++		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
+ 
+ 		$fbw = $bcw + $llm + $rlm; // Full barcode width incl. light margins
+ 		$ow = $fbw + $paddingL + $paddingR; // Full overall width incl. user-defined padding
+@@ -26159,7 +26160,7 @@
+ 		$fbwi = $fbw - 2; // Full barcode width incl. light margins - 2mm - for isbn string
+ 		// cf. http://www.gs1uk.org/downloads/bar_code/Bar coding getting it right.pdf
+ 		$num_height = 3 * $size;     // Height of numerals
+-		$fbh = $arrcode['nom-H'] * $size * $height;  // Full barcode height incl. numerals
++		$fbh = $arrcode[BarcodeInterface::NOM_H] * $size * $height;  // Full barcode height incl. numerals
+ 		$bch = $fbh - (1.5 * $size);     // Barcode height of bars	 (3mm for numerals)
+ 
+ 		if (($btype == 'EAN13' && $showtext) || $btype == 'ISSN' || $btype == 'ISBN') { // Add height for ISBN string + margin from top of bars
+@@ -26211,7 +26212,7 @@
+ 		}
+ 
+ 		if ($arrcode !== false) {
+-			foreach ($arrcode["bcode"] as $v) {
++			foreach ($arrcode[BarcodeInterface::BCODE] as $v) {
+ 				$bw = ($v["w"] * $xres);
+ 				if ($v["t"]) {
+ 					// draw a vertical bar
+@@ -26407,10 +26408,10 @@
+ 				throw new \Mpdf\MpdfException('Barcode supplement incorrect: ' . $supplement_code);
+ 			}
+ 
+-			$llm = $fbw - (($arrcode['lightmR'] - $supparrcode['sepM']) * $arrcode['nom-X'] * $size); // Left Light margin
+-			$rlm = $arrcode['lightmR'] * $arrcode['nom-X'] * $size; // Right Light margin
++			$llm = $fbw - (($arrcode[BarcodeInterface::LIGHT_MR] - $supparrcode[BarcodeInterface::SEP_M]) * $arrcode[BarcodeInterface::NOM_X] * $size); // Left Light margin
++			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $arrcode[BarcodeInterface::NOM_X] * $size; // Right Light margin
+ 
+-			$bcw = ($supparrcode["maxw"] * $xres); // Barcode width = Should always be 31.35mm * $size
++			$bcw = ($supparrcode[BarcodeInterface::MAX_W] * $xres); // Barcode width = Should always be 31.35mm * $size
+ 
+ 			$fbw = $bcw + $llm + $rlm; // Full barcode width incl. light margins
+ 			$ow = $fbw + $paddingL + $paddingR; // Full overall width incl. user-defined padding
+@@ -26426,7 +26427,7 @@
+ 			}
+ 
+ 			if ($supparrcode !== false) {
+-				foreach ($supparrcode["bcode"] as $v) {
++				foreach ($supparrcode[BarcodeInterface::BCODE] as $v) {
+ 					$bw = ($v["w"] * $xres);
+ 					if ($v["t"]) {
+ 						// draw a vertical bar
+@@ -26490,23 +26491,23 @@
+ 		$lw = $this->LineWidth;
+ 		$this->SetLineWidth(0.01);
+ 		$size /= $k; // in case resized in a table
+-		$xres = $arrcode['nom-X'] * $size;
++		$xres = $arrcode[BarcodeInterface::NOM_X] * $size;
+ 
+ 		if ($btype === 'IMB' || $btype === 'RM4SCC' || $btype === 'KIX' || $btype === 'POSTNET' || $btype === 'PLANET') {
+-			$llm = $arrcode['quietL'] / $k; // Left Quiet margin
+-			$rlm = $arrcode['quietR'] / $k; // Right Quiet margin
+-			$tlm = $blm = $arrcode['quietTB'] / $k;
++			$llm = $arrcode[BarcodeInterface::QUIET_L] / $k; // Left Quiet margin
++			$rlm = $arrcode[BarcodeInterface::QUIET_R] / $k; // Right Quiet margin
++			$tlm = $blm = $arrcode[BarcodeInterface::QUIET_TB] / $k;
+ 			$height = 1;  // Overrides
+ 		} elseif (in_array($btype, ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C', 'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B', 'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
+-			$llm = $arrcode['lightmL'] * $xres; // Left Quiet margin
+-			$rlm = $arrcode['lightmR'] * $xres; // Right Quiet margin
+-			$tlm = $blm = $arrcode['lightTB'] * $xres * $height;
++			$llm = $arrcode[BarcodeInterface::LIGHT_ML] * $xres; // Left Quiet margin
++			$rlm = $arrcode[BarcodeInterface::LIGHT_MR] * $xres; // Right Quiet margin
++			$tlm = $blm = $arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height;
+ 		}
+ 
+-		$bcw = ($arrcode["maxw"] * $xres);
++		$bcw = ($arrcode[BarcodeInterface::MAX_W] * $xres);
+ 		$fbw = $bcw + $llm + $rlm;  // Full barcode width incl. light margins
+ 
+-		$bch = ($arrcode["nom-H"] * $size * $height);
++		$bch = ($arrcode[BarcodeInterface::NOM_H] * $size * $height);
+ 		$fbh = $bch + $tlm + $blm;  // Full barcode height
+ 
+ 		// PRINT border background color
+@@ -26536,11 +26537,11 @@
+ 		$xpos = $x + $llm;
+ 
+ 		if ($arrcode !== false) {
+-			foreach ($arrcode["bcode"] as $v) {
++			foreach ($arrcode[BarcodeInterface::BCODE] as $v) {
+ 				$bw = ($v["w"] * $xres);
+ 				if ($v["t"]) {
+-					$ypos = $y + $tlm + ($bch * $v['p'] / $arrcode['maxh']);
+-					$this->Rect($xpos, $ypos, $bw, ($v['h'] * $bch / $arrcode['maxh']), 'F');
++					$ypos = $y + $tlm + ($bch * $v['p'] / $arrcode[BarcodeInterface::MAX_H]);
++					$this->Rect($xpos, $ypos, $bw, ($v['h'] * $bch / $arrcode[BarcodeInterface::MAX_H]), 'F');
+ 				}
+ 				$xpos += $bw;
+ 			}
+@@ -26548,8 +26549,8 @@
+ 
+ 		// PRINT BEARER BARS
+ 		if ($btype == 'I25B' || $btype == 'I25B+') {
+-			$this->Rect($x, $y, $fbw, ($arrcode['lightTB'] * $xres * $height), 'F');
+-			$this->Rect($x, $y + $tlm + $bch, $fbw, ($arrcode['lightTB'] * $xres * $height), 'F');
++			$this->Rect($x, $y, $fbw, ($arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height), 'F');
++			$this->Rect($x, $y + $tlm + $bch, $fbw, ($arrcode[BarcodeInterface::LIGHT_TB] * $xres * $height), 'F');
+ 		}
+ 
+ 		// Restore **************
+Index: tests/Mpdf/Barcode/ImbTest.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Mpdf/Barcode/ImbTest.php b/tests/Mpdf/Barcode/ImbTest.php
+--- a/tests/Mpdf/Barcode/ImbTest.php	(revision ac08bc80b5619ece8bf27a7f30f5f095e5374683)
++++ b/tests/Mpdf/Barcode/ImbTest.php	(revision a4918e0dfe714d1f66edccae6aefa74bfb2c39d2)
+@@ -18,8 +18,8 @@
+ 		$array = $barcode->getData();
+ 
+ 		$this->assertInternalType('array', $array);
+-		$this->assertArrayHasKey('maxh', $array);
+-		$this->assertGreaterThan(0, $array['maxh']);
++		$this->assertArrayHasKey(BarcodeInterface::MAX_H, $array);
++		$this->assertGreaterThan(0, $array[BarcodeInterface::MAX_H]);
+ 
+ 		$this->assertNull($barcode->getChecksum());
+ 	}
+Index: tests/Mpdf/Barcode/Rm4SccTest.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Mpdf/Barcode/Rm4SccTest.php b/tests/Mpdf/Barcode/Rm4SccTest.php
+--- a/tests/Mpdf/Barcode/Rm4SccTest.php	(revision ac08bc80b5619ece8bf27a7f30f5f095e5374683)
++++ b/tests/Mpdf/Barcode/Rm4SccTest.php	(revision a4918e0dfe714d1f66edccae6aefa74bfb2c39d2)
+@@ -18,8 +18,8 @@
+ 		$array = $barcode->getData();
+ 
+ 		$this->assertInternalType('array', $array);
+-		$this->assertArrayHasKey('maxh', $array);
+-		$this->assertGreaterThan(0, $array['maxh']);
++		$this->assertArrayHasKey(BarcodeInterface::MAX_H, $array);
++		$this->assertGreaterThan(0, $array[BarcodeInterface::MAX_H]);
+ 	}
+ 
+ }
+Index: src/Tag/BarCode.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Tag/BarCode.php b/src/Tag/BarCode.php
+--- a/src/Tag/BarCode.php	(revision 7b37f2416f4ecdc5d57f0b0d7bf28b05b0493874)
++++ b/src/Tag/BarCode.php	(revision 5672e7278a222d1aced07fa98319c2ba081f430c)
+@@ -2,6 +2,8 @@
+ 
+ namespace Mpdf\Tag;
+ 
++use Mpdf\Barcode\BarcodeInterface;
++
+ class BarCode extends Tag
+ {
+ 
+@@ -186,13 +188,13 @@
+ 
+ 				if ($objattr['bsupp'] == 2 || $objattr['bsupp'] == 5) { // EAN-2 or -5 Supplement
+ 					$supparrcode = $this->barcode->getBarcodeArray($objattr['bsupp_code'], 'EAN' . $objattr['bsupp'], '', $objattr['quiet_l'], $objattr['quiet_r']);
+-					$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']
+-							+ $supparrcode['maxw'] + $supparrcode['sepM']) * $arrcode['nom-X'] * $objattr['bsize'];
++					$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]
++							+ $supparrcode[BarcodeInterface::MAX_W] + $supparrcode[BarcodeInterface::SEP_M]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
+ 				} else {
+-					$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
++					$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
+ 				}
+ 
+-				$h = $arrcode['nom-H'] * $objattr['bsize'] * $objattr['bheight'];
++				$h = $arrcode[BarcodeInterface::NOM_H] * $objattr['bsize'] * $objattr['bheight'];
+ 				// Add height for ISBN string + margin from top of bars
+ 				if (($objattr['showtext'] && $objattr['btype'] === 'EAN13') || $objattr['btype'] === 'ISBN' || $objattr['btype'] === 'ISSN') {
+ 					$tisbnm = 1.5 * $objattr['bsize']; // Top margin between TOP TEXT (isbn - if shown) & bars
+@@ -215,16 +217,16 @@
+ 
+ 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], '', $objattr['quiet_l'], $objattr['quiet_r']);
+ 
+-				$w = ($arrcode['maxw'] * $arrcode['nom-X'] * $objattr['bsize']) + $arrcode['quietL'] + $arrcode['quietR'];
+-				$h = ($arrcode['nom-H'] * $objattr['bsize']) + (2 * $arrcode['quietTB']);
++				$w = ($arrcode[BarcodeInterface::MAX_W] * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize']) + $arrcode[BarcodeInterface::QUIET_L] + $arrcode[BarcodeInterface::QUIET_R];
++				$h = ($arrcode[BarcodeInterface::NOM_H] * $objattr['bsize']) + (2 * $arrcode[BarcodeInterface::QUIET_TB]);
+ 
+ 			} elseif (in_array($objattr['btype'], ['C128A', 'C128B', 'C128C', 'C128RAW', 'EAN128A', 'EAN128B', 'EAN128C',
+ 				'C39', 'C39+', 'C39E', 'C39E+', 'S25', 'S25+', 'I25', 'I25+', 'I25B',
+ 				'I25B+', 'C93', 'MSI', 'MSI+', 'CODABAR', 'CODE11'])) {
+ 
+ 				$arrcode = $this->barcode->getBarcodeArray($objattr['code'], $objattr['btype'], $objattr['pr_ratio'], $objattr['quiet_zone_left'], $objattr['quiet_zone_right']);
+-				$w = ($arrcode['maxw'] + $arrcode['lightmL'] + $arrcode['lightmR']) * $arrcode['nom-X'] * $objattr['bsize'];
+-				$h = ((2 * $arrcode['lightTB'] * $arrcode['nom-X']) + $arrcode['nom-H']) * $objattr['bsize'] * $objattr['bheight'];
++				$w = ($arrcode[BarcodeInterface::MAX_W] + $arrcode[BarcodeInterface::LIGHT_ML] + $arrcode[BarcodeInterface::LIGHT_MR]) * $arrcode[BarcodeInterface::NOM_X] * $objattr['bsize'];
++				$h = ((2 * $arrcode[BarcodeInterface::LIGHT_TB] * $arrcode[BarcodeInterface::NOM_X]) + $arrcode[BarcodeInterface::NOM_H]) * $objattr['bsize'] * $objattr['bheight'];
+ 
+ 			} else {
+ 				return;
+Index: src/Barcode/BarcodeException.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Barcode/BarcodeException.php b/src/Barcode/BarcodeException.php
+--- a/src/Barcode/BarcodeException.php	(revision 5672e7278a222d1aced07fa98319c2ba081f430c)
++++ b/src/Barcode/BarcodeException.php	(revision 97b3f5a3cf39ecb9c5840efa8de7da0ec8c01ff2)
+@@ -2,7 +2,8 @@
+ 
+ namespace Mpdf\Barcode;
+ 
+-class BarcodeException extends \Mpdf\MpdfException
+-{
++use Mpdf\MpdfException;
+ 
++class BarcodeException extends MpdfException
++{
+ }
+Index: ruleset.xml
+===================================================================
+diff --git a/ruleset.xml b/ruleset.xml
+deleted file mode 100644
+--- a/ruleset.xml	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
++++ /dev/null	(revision 9964c0e6177050d8e67fa22e0fec643532400351)
+@@ -1,43 +0,0 @@
+-<?xml version="1.0"?>
+-<ruleset name="PSR2Tabs">
+-    <description>PSR2 with tabs instead of spaces.</description>
+-    <arg name="tab-width" value="4" />
+-    <rule ref="PSR2">
+-
+-        <exclude name="Generic.Commenting.DocComment" />
+-        <exclude name="Generic.Files.LineLength.TooLong" />
+-        <exclude name="Generic.Files.LineLength.MaxExceeded" />
+-        <exclude name="Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase)" />
+-        <exclude name="Generic.WhiteSpace.DisallowTabIndent" />
+-
+-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+-        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
+-
+-        <exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody" />
+-        <exclude name="PSR2.Classes.PropertyDeclaration.ScopeMissing" />
+-        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+-        <exclude name="PSR2.Classes.PropertyDeclaration.VarUsed" />
+-        <exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
+-        <exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
+-
+-        <exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
+-        <exclude name="Squiz.Scope.MethodScope.Missing" />
+-        <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
+-        <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+-
+-    </rule>
+-
+-    <rule ref="Generic.Formatting.SpaceAfterCast">
+-        <properties>
+-            <property name="spacing" value="1" />
+-        </properties>
+-    </rule>
+-
+-    <rule ref="Generic.WhiteSpace.DisallowSpaceIndent" />
+-    <rule ref="Generic.WhiteSpace.ScopeIndent">
+-        <properties>
+-            <property name="indent" value="4" />
+-            <property name="tabIndent" value="true" />
+-        </properties>
+-    </rule>
+-</ruleset>

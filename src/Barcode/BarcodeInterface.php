@@ -20,7 +20,7 @@ interface BarcodeInterface
     public const MAX_H = 'maxh';
     public const MAX_W = 'maxw';
 
-// Nominal value for Height of Full bar in mm (non-spec.)
+    // Nominal value for Height of Full bar in mm (non-spec.)
     public const NOM_H = 'nom-H';
 
     // Nominal value for X-dim (bar width) in mm (2 X min. spec.)
@@ -28,6 +28,8 @@ interface BarcodeInterface
     public const QUIET_L = 'quietL';
     public const QUIET_R = 'quietR';
     public const QUIET_TB = 'quietTB';
+
+    // SEPARATION margin =  x X-dim (http://web.archive.org/web/19990501035133/http://www.uc-council.org/d36-d.htm)
     public const SEP_M = 'sepM';
 
     public function getType(): string;

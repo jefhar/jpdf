@@ -140,26 +140,26 @@ class Barcode
                 );
 
             case 'C128A': // CODE 128 A
-                return new Barcode\Code128($code, 'A', false, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_A, false, $quiet_zone_left, $quiet_zone_right);
 
             case 'C128B': // CODE 128 B
-                return new Barcode\Code128($code, 'B', false, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_B, false, $quiet_zone_left, $quiet_zone_right);
 
             case 'C128C':  // CODE 128 C
-                return new Barcode\Code128($code, 'C', false, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_C, false, $quiet_zone_left, $quiet_zone_right);
 
             case 'C128RAW':  // CODE 128 RAW -- code is a space separated list of codes
                 // with startcode but without checkdigit,stop,end ex: "105 12 34"
-                return new Barcode\Code128($code, 'RAW', false, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_RAW, false, $quiet_zone_left, $quiet_zone_right);
 
             case 'EAN128A':  // EAN 128 A
-                return new Barcode\Code128($code, 'A', true, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_A, true, $quiet_zone_left, $quiet_zone_right);
 
             case 'EAN128B':  // EAN 128 B
-                return new Barcode\Code128($code, 'B', true, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_B, true, $quiet_zone_left, $quiet_zone_right);
 
             case 'EAN128C': // EAN 128 C
-                return new Barcode\Code128($code, 'C', true, $quiet_zone_left, $quiet_zone_right);
+                return new Barcode\Code128($code, Barcode\Code128::TYPE_C, true, $quiet_zone_left, $quiet_zone_right);
 
             case 'C39':  // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.
                 return new Barcode\Code39(

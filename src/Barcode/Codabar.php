@@ -8,6 +8,11 @@ namespace Mpdf\Barcode;
  */
 class Codabar extends AbstractBarcode
 {
+    protected array $data = [
+        self::LIGHT_TB => 0,
+        self::NOM_H => 10,
+        self::NOM_X => 0.381,
+    ];
     protected string $type = 'CODABAR';
     private const CHARACTER_MAP = [
         '0' => '11111221',
@@ -48,11 +53,8 @@ class Codabar extends AbstractBarcode
     ) {
         $this->init(strtoupper($code), $printRatio);
 
-        $this->data[self::NOM_X] = 0.381;
-        $this->data[self::NOM_H] = 10;
         $this->data[self::LIGHT_ML] = ($quietZoneLeft !== null ? $quietZoneLeft : 10);
         $this->data[self::LIGHT_MR] = ($quietZoneRight !== null ? $quietZoneRight : 10);
-        $this->data[self::LIGHT_TB] = 0;
     }
 
     /**
@@ -63,12 +65,12 @@ class Codabar extends AbstractBarcode
     private function init(string $code, float $printRatio)
     {
         $barArray = [
-            BarcodeInterface::CODE => $code,
-            BarcodeInterface::MAX_W => 0,
-            BarcodeInterface::MAX_H => 1,
-            BarcodeInterface::BCODE => [],
+            self::BCODE => [],
+            self::CODE => $code,
+            self::MAX_H => 1,
+            self::MAX_W => 0,
         ];
-        $k = 0;
+        $element = 0;
 
         $stringLength = strlen($code);
 
@@ -83,14 +85,14 @@ class Codabar extends AbstractBarcode
                 );
             }
 
-            $seq = self::CHARACTER_MAP[$code[$i]];
+            $character = self::CHARACTER_MAP[$code[$i]];
 
             for ($j = 0; $j < 8; ++$j) {
-                $t = ($j % 2) == 0; // true is bar, false is space
-                $width = $seq[$j] === 2 ? $printRatio : 1;
-                $barArray[BarcodeInterface::BCODE][$k] = ['t' => $t, 'w' => $width, 'h' => 1, 'p' => 0];
-                $barArray[BarcodeInterface::MAX_W] += $width;
-                ++$k;
+                $t = ($j % 2) === 0; // true is bar, false is space
+                $width = $character[$j] === 2 ? $printRatio : 1;
+                $barArray[self::BCODE][$element] = ['t' => $t, 'w' => $width, 'h' => 1, 'p' => 0];
+                $barArray[self::MAX_W] += $width;
+                ++$element;
             }
         }
 
